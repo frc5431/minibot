@@ -18,12 +18,11 @@ import org.usfirst.frc.team5431.robot.*;
  */
 public class Robot extends IterativeRobot {
 	Joystick joy;
+	Auton auton;
 	DriveBase drive;
 	Intake intake;
 	Encoder enc1;
 	Encoder enc2;
-	CANTalon flipper;
-	CANTalon intakeMotor;
 
 	 
     public void robotInit() {
@@ -35,8 +34,8 @@ public class Robot extends IterativeRobot {
     	drive = new DriveBase();
     	//intake = new Intake();
     	joy = new Joystick(0);
-    	flipper = new CANTalon(constants.Flipper);
-    	intakeMotor = new CANTalon(constants.Intake);
+    	intake = new Intake();
+    	
 
     }
     
