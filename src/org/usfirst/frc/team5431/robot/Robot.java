@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import org.usfirst.frc.team5431.robot.*;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -26,6 +27,9 @@ public class Robot extends IterativeRobot {
 
 	
     public void robotInit() {
+    	Auton auton = new Auton(1);
+    	auton.init();
+    	//Auton.init();
     	//enc1 = new Encoder(0, 1, false, Encoder.EncodingType.k4X);
     	//enc2 = new Encoder(2, 3, false, Encoder.EncodingType.k4X);
     	drive = new DriveBase();
