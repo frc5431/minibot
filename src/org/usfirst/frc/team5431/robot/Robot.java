@@ -24,10 +24,10 @@ public class Robot extends IterativeRobot {
 	CANTalon flipper;
 	CANTalon intakeMotor;
 
-	
+	 
     public void robotInit() {
     	//enc1 = new Encoder(0, 1, false, Encoder.EncodingType.k4X);
-    	//enc2 = new Encoder(2, 3, false, Encoder.EncodingType.k4X);
+    	//enc2 = new Encoder(2, 3, false, Encoder.EncodingType.k4X); 
     	drive = new DriveBase();
     	//intake = new Intake();
     	joy = new Joystick(0);
