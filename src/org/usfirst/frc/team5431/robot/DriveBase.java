@@ -21,6 +21,7 @@ public class DriveBase{
 	}
 	
 	public void setLeftRight(double left, double right){
+		if(right > 0.1 || right < -0.1)
 		masterRight.set(right);
     	masterLeft.set(-left); 
 	}
