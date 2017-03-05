@@ -4,15 +4,15 @@ import edu.wpi.first.wpilibj.internal.HardwareTimer;
 
 class Timing {
 	
-	public static HardwareTimer h_timer = new HardwareTimer();
+	public HardwareTimer h_timer = new HardwareTimer();
 	
-	public static double start_time = 0.0;
+	public double start_time = 0.0;
 	
-	public static double getSeconds() {
+	public double getSeconds() {
 		return h_timer.getFPGATimestamp();
 	}
 	
-	public static boolean waited(double seconds){
+	public boolean waited(double seconds){
 		if (start_time == 0){
 			start_time = getSeconds();
 		}
@@ -28,27 +28,27 @@ class Timing {
 }
 
 class Movement {
-	public static boolean travelled(double distance){
+	public boolean travelled(double distance){
 		
 	}
 	
-	public static void driveForward(double power){
-		
+	public void driveForward(double power){
+		DriveBase.drive(-power, -power);
 	}
 	
-	public static void driveBackward(double power){
+	public void driveBackward(double power){
 		
 	}
 
-	public static void turnLeft(double power){
+	public void turnLeft(double power){
 		
 	}
 	
-	public static void turnRight(double power){
+	public void turnRight(double power){
 		
 	}
 	
-	public static void stayStill(){
+	public void stayStill(){
 		
 	}
 
@@ -59,13 +59,13 @@ class Movement {
 
 public class Auton {
 
-	public static int main_state;
+	public int main_state;
 	
-	public static void init() {
+	public void init() {
 		main_state = 0;
 	}
 	
-	public static void run() {
+	public void run() {
 		
 	}
 	

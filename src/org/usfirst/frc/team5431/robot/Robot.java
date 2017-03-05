@@ -27,7 +27,6 @@ public class Robot extends IterativeRobot {
 	 
     public void robotInit() {
     	Auton auton = new Auton(1);
-    	auton.init();
     	//Auton.init();
     	//enc1 = new Encoder(0, 1, false, Encoder.EncodingType.k4X);
     	//enc2 = new Encoder(2, 3, false, Encoder.EncodingType.k4X); 

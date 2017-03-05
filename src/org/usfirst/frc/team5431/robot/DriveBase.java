@@ -20,9 +20,12 @@ public class DriveBase{
     	bLeft.set(constants.masterLeftId);
 	}
 	
-	public void setLeftRight(double left, double right){
-		if(right > 0.1 || right < -0.1)
-		masterRight.set(right);
-    	masterLeft.set(-left); 
+	public void drive(double left, double right){
+		if(right > 0.1 || right < -0.1){
+			masterRight.set(right);
+		}
+		if(left > 0.1 || left < -0.1){
+	    	masterLeft.set(-left); 
+		}
 	}
 }
