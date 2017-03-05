@@ -21,10 +21,10 @@ public class Robot extends IterativeRobot {
 	static Auton auton;
 	static DriveBase drive;
 	static Intake intake;
-
+	int flipperToggle = 0;
 	 
     public void robotInit() {
-    	Auton auton = new Auton(1);
+    	Auton auton = new Auton();
     	//Auton.init();
     	//enc1 = new Encoder(0, 1, false, Encoder.EncodingType.k4X);
     	//enc2 = new Encoder(2, 3, false, Encoder.EncodingType.k4X); 
@@ -49,30 +49,9 @@ public class Robot extends IterativeRobot {
      * This function is called periodically during operator control
      */
     public void teleopPeriodic() {
-    	drive.setLeftRight(joy.getRawAxis(1), joy.getRawAxis(5));
-    	if(joy.getRawAxis(3)>0.5){
-    		intakeMotor.set(-joy.getRawAxis(3));
-    	}
-    	else if(joy.getRawAxis(2)>0.5){
-    		intakeMotor.set(joy.getRawAxis(2));
-    	}
-    	else{
-    		intakeMotor.set(0);
-    	}
-    	
-    	if(joy.getRawButton(3)){
-    		flipper.set(-0.5);
-    	}
-    	else if(joy.getRawButton(2)){
-    		flipper.set(0.5);
-    	}
-    	else{
-    		flipper.set(0);
-    	}
-    	//SmartDashboard.putNumber("Value", intake.setFlipperPosition());
-    	//SmartDashboard.putNumber("encoder1", enc1.get());
-    	//SmartDashboard.putNumber("encoder2", enc2.get());
-    	}
+    	drive.drive(joy.getRawAxis(1), joy.getRawAxis(5));
+    	if(flipperToggle)
+    }
    
     public void testPeriodic() {
     
