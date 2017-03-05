@@ -22,7 +22,8 @@ public class Robot extends IterativeRobot {
 	static DriveBase drive;
 	static Intake intake;
 	int flipperToggle = 0;
-	 
+	boolean flipperDown = true;
+	
     public void robotInit() {
     	Auton auton = new Auton();
     	//Auton.init();
@@ -50,7 +51,39 @@ public class Robot extends IterativeRobot {
      */
     public void teleopPeriodic() {
     	drive.drive(joy.getRawAxis(1), joy.getRawAxis(5));
-    	if(flipperToggle)
+    	if(flipperToggle > joy.getRawButton(6))
+    	{
+    		if(!flipperDown)
+    		{
+    			intake.flipperDown();
+    			flipperDown = true;
+    		}
+    		else
+    		{
+    			intake.flipperUp();
+    			flipperDown = false;
+    		}
+    	}
+    	
+    	flipperToggle = joy.getRawButton(6);
+    	
+    	if(flipperDown)
+    	{
+    		if(intake.limitOn())
+    			intake.intakeOn(1.0);
+    		else
+    			intake.intakeOff();
+    	}
+    	
+    	if(joy.getRawButton(5))
+    	{
+    		//Put on gear
+    	}
+    	
+    	if(joy.getRawAxis(3) > 0.5)
+    	{
+    		//Climb
+    	}
     }
    
     public void testPeriodic() {
