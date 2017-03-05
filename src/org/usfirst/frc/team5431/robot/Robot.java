@@ -17,12 +17,10 @@ import org.usfirst.frc.team5431.robot.*;
  * directory.
  */
 public class Robot extends IterativeRobot {
-	Joystick joy;
-	Auton auton;
-	DriveBase drive;
-	Intake intake;
-	Encoder enc1;
-	Encoder enc2;
+	static Joystick joy;
+	static Auton auton;
+	static DriveBase drive;
+	static Intake intake;
 
 	 
     public void robotInit() {
