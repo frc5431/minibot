@@ -1,6 +1,7 @@
 package org.usfirst.frc.team5431.robot;
 import edu.wpi.first.wpilibj.Timer;
 
+/*
 class Auton{
 	int state = 0;
 	void run(int selection)
@@ -26,18 +27,18 @@ class Auton{
 		switch(state)
 		{
 		case 0:
-			Robot.drive.resetEncoders();
+			DriveBase.resetEncoders();
 			state = 1;
 		case 1:
-			Robot.drive.drive(0.5, 0.5);
-			if(Robot.drive.leftEncoder() >= 113 || Robot.drive.rightEncoder() >= 113)
+			DriveBase.drive(0.5, 0.5);
+			if(DriveBase.leftEncoder() >= 113 || DriveBase.rightEncoder() >= 113)
 			{
-				Robot.drive.drive(0.0, 0.0);
+				DriveBase.drive(0.0, 0.0);
 				state = 2;
 			}
 			break;
 		case 2:
-			Robot.drive.drive(0.0, 0.0);
+			DriveBase.drive(0.0, 0.0);
 			state = 3;
 			break;
 		case 3:
@@ -50,13 +51,13 @@ class Auton{
 		switch(state)
 		{
 		case 0:
-			Robot.drive.resetEncoders();
+			DriveBase.resetEncoders();
 			state = 1;
 		case 1:
-			Robot.drive.drive(0.5, 0.5);
-			if(Robot.drive.leftEncoder() >= 113 || Robot.drive.rightEncoder() >= 113)
+			DriveBase.drive(0.5, 0.5);
+			if(DriveBase.leftEncoder() >= 113 || DriveBase.rightEncoder() >= 113)
 			{
-				Robot.drive.drive(0.0, 0.0);
+				DriveBase.drive(0.0, 0.0);
 				state = 2;
 			}
 			break;
@@ -65,22 +66,22 @@ class Auton{
 			state = 3;
 			break;
 		case 3:
-			Robot.drive.drive(-0.3, 0.3);
-			if(Robot.drive.getYaw() >= 54)
+			DriveBase.drive(-0.3, 0.3);
+			if(DriveBase.getYaw() >= 54)
 			{
-				Robot.drive.drive(0.0, 0.0);
+				DriveBase.drive(0.0, 0.0);
 				state = 4;
 			}
 			break;
 		case 4:
-			Robot.drive.resetEncoders();
+			DriveBase.resetEncoders();
 			state = 5;
 			break;
 		case 5:
-			Robot.drive.drive(0.5, 0.5);
-			if(Robot.drive.leftEncoder() >= 84 || Robot.drive.rightEncoder() >= 84)
+			DriveBase.drive(0.5, 0.5);
+			if(DriveBase.leftEncoder() >= 84 || DriveBase.rightEncoder() >= 84)
 			{
-				Robot.drive.drive(0.0, 0.0);
+				DriveBase.drive(0.0, 0.0);
 				state = 6;
 			}
 			break;
@@ -92,4 +93,4 @@ class Auton{
 			break;
 		}
 	}
-}
+}*/

@@ -6,7 +6,9 @@ import com.ctre.CANTalon;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.CameraServer;
 import org.usfirst.frc.team5431.robot.*;
 
 /**
@@ -17,24 +19,22 @@ import org.usfirst.frc.team5431.robot.*;
  * directory.
  */
 public class Robot extends IterativeRobot {
-	static Joystick joy;
-	static Auton auton;
-	static DriveBase drive;
-	static Intake intake;
+	Joystick xbox;
+	Joystick extreme;
+	//DriveBase drive;
 	int flipperToggle = 0;
-	boolean flipperDown = true;
+	boolean isFlipperDown = true;
 	
     public void robotInit() {
-    	Auton auton = new Auton();
+    	//Auton auton = new Auton();
     	//Auton.init();
     	//enc1 = new Encoder(0, 1, false, Encoder.EncodingType.k4X);
     	//enc2 = new Encoder(2, 3, false, Encoder.EncodingType.k4X); 
-    	drive = new DriveBase();
-    	//intake = new Intake();
-    	joy = new Joystick(0);
-    	intake = new Intake();
-    	
-
+    	//drive = new DriveBase();
+    	//Intake = new Intake();
+    	xbox = new Joystick(0);
+    	extreme = new Joystick(1);
+    	CameraServer.getInstance().startAutomaticCapture();
     }
     
     public void autonomousInit() {
@@ -49,42 +49,81 @@ public class Robot extends IterativeRobot {
     /**
      * This function is called periodically during operator control
      */
+    public void teleopInit(){
+    	DriveBase.driveBaseInit();
+    	Intake.intakeInit();
+    }
+    
     public void teleopPeriodic() {
-    	drive.drive(joy.getRawAxis(1), joy.getRawAxis(5));
-    	if(flipperToggle > joy.getRawButton(6))
+    	//Intake.intakeOn();
+    	//Intake.setFlipperPosition(1);
+    	DriveBase.driver(xbox.getRawAxis(1), xbox.getRawAxis(5));
+    	if(extreme.getRawButton(7)){
+    		Intake.flipperUp();
+    	}
+    	else if(extreme.getRawButton(8)){
+    		Intake.flipperDown();
+    	}else{
+    		Intake.flipperOff();
+    		
+    	}
+    	
+    	if(extreme.getRawButton(9) && Intake.isLimit()){
+    		Intake.intakeOn(); 
+    	}
+    	else if(extreme.getRawButton(10)){
+    		Intake.intakeRev();    	
+    	}
+    	else if(extreme.getRawButton(11)){
+    		Intake.climb();
+    	}
+    	else{
+    		Intake.intakeOff();
+    	}
+    	
+    }
+    	
+    	/*if(xbox.getRawAxis(2)>0.5){
+    		Intake.intakeOn();
+    	}
+    }    	
+    
+    
+    
+    	if(flipperToggle > (xbox.getRawButton(6) ? 0:1))
     	{
-    		if(!flipperDown)
+    		if(!isFlipperDown)
     		{
-    			intake.flipperDown();
-    			flipperDown = true;
+    			Intake.flipperDown();
+    			isFlipperDown = true;
     		}
     		else
     		{
-    			intake.flipperUp();
-    			flipperDown = false;
+    			Intake.flipperUp();
+    			isFlipperDown = false;
     		}
     	}
     	
-    	flipperToggle = joy.getRawButton(6);
+    	flipperToggle = xbox.getRawButton(6) ? 0:1;
     	
-    	if(flipperDown)
+    	if(isFlipperDown)
     	{
-    		if(intake.limitOn())
-    			intake.intakeOn(1.0);
+    		if(Intake.limitOn())
+    			Intake.intakeOn(1.0);
     		else
-    			intake.intakeOff();
+    			Intake.intakeOff();
     	}
     	
-    	if(joy.getRawButton(5))
+    	if(xbox.getRawButton(5))
     	{
     		//Put on gear
     	}
     	
-    	if(joy.getRawAxis(3) > 0.5)
+    	if(xbox.getRawAxis(3) > 0.5)
     	{
-    		//Climb
+    		Intake.climb();
     	}
-    }
+    }*/
    
     public void testPeriodic() {
     

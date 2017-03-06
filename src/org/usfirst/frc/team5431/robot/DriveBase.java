@@ -8,57 +8,70 @@ import com.kauailabs.navx.frc.AHRS;
 import com.ctre.CANTalon;
 
 public class DriveBase{
-	CANTalon bRight;
-    CANTalon bLeft;
-    CANTalon masterRight;
-    CANTalon masterLeft;
-    Encoder rightEncoder;
-    Encoder leftEncoder;
-    AHRS ahrs;
+	static CANTalon bRight;
+    static CANTalon bLeft;
+    static CANTalon masterRight;
+    static CANTalon masterLeft;
+    static Encoder rightEncoder;
+    static Encoder leftEncoder;
+    static AHRS ahrs;
     
-	public DriveBase(){
+	public static void driveBaseInit(){
 		masterRight = new CANTalon(constants.masterRightId);
+		masterRight.enableBrakeMode(true);
 //		masterRight.setFeedbackDevice(CANTalon.FeedbackDevice.EncRising);
     	masterLeft = new CANTalon(constants.masterLeftId);
+		masterLeft.enableBrakeMode(true);
 //    	masterLeft.setFeedbackDevice(CANTalon.FeedbackDevice.EncRising);
     	bRight = new CANTalon(constants.bRightId);
     	bRight.changeControlMode(CANTalon.TalonControlMode.Follower);
     	bRight.set(constants.masterRightId);
+		bRight.enableBrakeMode(true);
+
     	bLeft = new CANTalon(constants.bLeftId);
     	bLeft.changeControlMode(CANTalon.TalonControlMode.Follower);
     	bLeft.set(constants.masterLeftId);
+		bLeft.enableBrakeMode(true);
+
     	rightEncoder = new Encoder(0, 1, false, EncodingType.k4X);
     	rightEncoder.setDistancePerPulse(0.00589294059473);
     	leftEncoder = new Encoder(2, 3, false, EncodingType.k4X);
     	leftEncoder.setDistancePerPulse(0.00589294059473);
 	}
 	
-	public void drive(double left, double right){
-		if(right > 0.1 || right < -0.1){
+	public static void driver(double left, double right){
+		if(right > 0.2 || right < -0.2){
 			masterRight.set(right);
 		}
-		if(left > 0.1 || left < -0.1){
+		else{
+			masterRight.set(0);
+		}
+		
+		if(left > 0.2 || left < -0.2){
 	    	masterLeft.set(-left); 
+		}
+		else{
+			masterLeft.set(0);
 		}
 	}
 	
-	public void resetEncoders()
+	public static void resetEncoders()
 	{
 		masterRight.reset();
 		masterLeft.reset();
 	}
 	
-	public double leftEncoder()
+	public static double leftEncoder()
 	{
 		return masterLeft.get();
 	}
 	
-	public double rightEncoder()
+	public static double rightEncoder()
 	{
 		return masterRight.get();
 	}
 	
-	public double getYaw()
+	public static double getYaw()
 	{
 		return ahrs.getYaw();
 	}
