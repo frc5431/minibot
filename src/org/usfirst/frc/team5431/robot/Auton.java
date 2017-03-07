@@ -30,7 +30,7 @@ class Auton{
 	}
 	
 	static void driveForward(double power){
-		DriveBase.driver(-power, -power - 0.145);
+		DriveBase.driver(-power, -power - 0.14);
 	}
 	
 	static void driveBackward(double power){
@@ -107,7 +107,7 @@ class Auton{
 			break;
 		case 40:
 			turnRight(0.3);
-			if(turned(54))
+			if(turned(49))
 			{
 				state = 50;
 			}
@@ -120,8 +120,8 @@ class Auton{
 			break;
 			
 		case 60:
-			driveForward(0.3);
-			if(travelled(32))
+			driveForward(0.27);
+			if(travelled(30))//32
 			{
 				state = 70;
 			}

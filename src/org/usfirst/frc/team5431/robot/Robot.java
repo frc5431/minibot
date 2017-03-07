@@ -39,7 +39,8 @@ public class Robot extends IterativeRobot {
     	xBoxOperate = new Joystick(1);
     	
     	UsbCamera lifecam = CameraServer.getInstance().startAutomaticCapture();
-    	lifecam.setResolution(180, 180);
+//    	lifecam.setFPS(1);
+//    	lifecam.setResolution(180, 180);
 
     	
     	
@@ -116,10 +117,10 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putNumber("yaw teleop", DriveBase.getYaw());
 		
 		if (!Intake.isLimit()){
-			SmartDashboard.putNumber("limit pressed", 1);
+			SmartDashboard.putBoolean("gearIn", true);
 		}
 		else{
-			SmartDashboard.putNumber("limit pressed", 0);
+			SmartDashboard.putBoolean("gearIn", false);
 		}
     	
     }
