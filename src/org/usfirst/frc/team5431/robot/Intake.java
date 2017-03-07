@@ -1,4 +1,6 @@
 package org.usfirst.frc.team5431.robot;
+import edu.wpi.first.wpilibj.Timer;
+
 
 import com.ctre.CANTalon;
 
@@ -34,11 +36,11 @@ public class Intake {
     	
     }
     
-    public static void flipperUp(){
+    public static void flipperDown(){
     	flipper.set(1);
     }
     
-    public static void flipperDown(){
+    public static void flipperUp(){
     	flipper.set(-1);
     }
     
@@ -66,13 +68,44 @@ public class Intake {
     	intakeMotor.set(0.5);
     }
     
-    public static void downAndOn(){
-    	flipper.set(-0.5);
-    	intakeMotor.set(-0.5);
+    public static void placeGear(){
+    	flipper.set(0.5);
+    	Timer.delay(0.2);
+    	intakeMotor.set(1);
+    	Timer.delay(0.2);
+    	SmartDashboard.putNumber("did delay work", 1);
+    	intakeOff();
     }
     
     public static boolean isLimit(){
     	return limit.get();
     }
     
+    
+    public static void toggleIntake(){
+    	if (isIntakeOn()){
+    		intakeOff();
+    	}
+    	else{
+    		intakeOn();
+    	}
+    }
+    
+    public static boolean isIntakeOn(){
+    	if (intakeMotor.get() < -0.1){ //inverted motor
+    		return true;
+    	}
+    	else{
+        	return false;
+    	}
+    }
+    
+    public static boolean isClimberOn(){
+    	if (climber.get() < -0.1){ //inverted motor
+    		return true;
+    	}
+    	else{
+        	return false;
+    	}
+    }
 }

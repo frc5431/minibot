@@ -4,6 +4,8 @@ import org.usfirst.frc.team5431.robot.constants;
 
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.SPI;
+
 import com.kauailabs.navx.frc.AHRS;
 import com.ctre.CANTalon;
 
@@ -34,9 +36,13 @@ public class DriveBase{
 		bLeft.enableBrakeMode(true);
 
     	rightEncoder = new Encoder(0, 1, false, EncodingType.k4X);
-    	rightEncoder.setDistancePerPulse(0.00589294059473);
-    	leftEncoder = new Encoder(2, 3, false, EncodingType.k4X);
-    	leftEncoder.setDistancePerPulse(0.00589294059473);
+    	rightEncoder.setDistancePerPulse(4 * Math.PI/360);
+    	rightEncoder.setSamplesToAverage(1);
+    	leftEncoder = new Encoder(2, 3, true, EncodingType.k4X);
+    	leftEncoder.setDistancePerPulse(4 * Math.PI/360);
+    	rightEncoder.setSamplesToAverage(1);
+    	
+    	ahrs = new AHRS(SPI.Port.kMXP);
 	}
 	
 	public static void driver(double left, double right){
@@ -57,22 +63,28 @@ public class DriveBase{
 	
 	public static void resetEncoders()
 	{
-		masterRight.reset();
-		masterLeft.reset();
+		rightEncoder.reset();
+		leftEncoder.reset();
 	}
 	
 	public static double leftEncoder()
 	{
-		return masterLeft.get();
+		return leftEncoder.getDistance();
 	}
 	
 	public static double rightEncoder()
 	{
-		return masterRight.get();
+		return rightEncoder.getDistance();
 	}
+	
 	
 	public static double getYaw()
 	{
 		return ahrs.getYaw();
+	}
+	
+	public static void resetAHRS()
+	{
+		ahrs.reset();
 	}
 }

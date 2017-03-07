@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.CameraServer;
 import org.usfirst.frc.team5431.robot.*;
 
@@ -19,11 +20,13 @@ import org.usfirst.frc.team5431.robot.*;
  * directory.
  */
 public class Robot extends IterativeRobot {
-	Joystick xbox;
-	Joystick extreme;
+	Joystick xBoxDrive;
+	Joystick xBoxOperate;
 	//DriveBase drive;
 	int flipperToggle = 0;
 	boolean isFlipperDown = true;
+	int prev = 0;
+
 	
     public void robotInit() {
     	//Auton auton = new Auton();
@@ -32,54 +35,92 @@ public class Robot extends IterativeRobot {
     	//enc2 = new Encoder(2, 3, false, Encoder.EncodingType.k4X); 
     	//drive = new DriveBase();
     	//Intake = new Intake();
-    	xbox = new Joystick(0);
-    	extreme = new Joystick(1);
-    	CameraServer.getInstance().startAutomaticCapture();
+    	xBoxDrive = new Joystick(0);
+    	xBoxOperate = new Joystick(1);
+    	
+    	UsbCamera lifecam = CameraServer.getInstance().startAutomaticCapture();
+    	lifecam.setResolution(180, 180);
+
+    	
+    	
+    	
+    	DriveBase.driveBaseInit();
+    	Intake.intakeInit();
+
     }
     
     public void autonomousInit() {
+    	Auton.state = 10;
+    	DriveBase.resetEncoders();
+    	DriveBase.resetAHRS();
+
+
     }
 
     /**
      * This function is called periodically during autonomous
      */
     public void autonomousPeriodic() {
+    	Auton.run(0);
     }
 
     /**
      * This function is called periodically during operator control
      */
     public void teleopInit(){
-    	DriveBase.driveBaseInit();
-    	Intake.intakeInit();
+    	DriveBase.resetEncoders();
+    	DriveBase.resetAHRS();
+    	//DriveBase.driveBaseInit();
+    	
     }
     
     public void teleopPeriodic() {
     	//Intake.intakeOn();
     	//Intake.setFlipperPosition(1);
-    	DriveBase.driver(xbox.getRawAxis(1), xbox.getRawAxis(5));
-    	if(extreme.getRawButton(7)){
+    	DriveBase.driver(xBoxDrive.getRawAxis(1), xBoxDrive.getRawAxis(5));
+    	if(xBoxOperate.getRawButton(6)){
     		Intake.flipperUp();
     	}
-    	else if(extreme.getRawButton(8)){
+    	else if(xBoxOperate.getRawButton(5)){
     		Intake.flipperDown();
     	}else{
     		Intake.flipperOff();
     		
     	}
     	
-    	if(extreme.getRawButton(9) && Intake.isLimit()){
-    		Intake.intakeOn(); 
+    	
+    	if(prev > (xBoxOperate.getRawAxis(2) > 0.5 ? 0:1)){
+    		Intake.toggleIntake();
     	}
-    	else if(extreme.getRawButton(10)){
-    		Intake.intakeRev();    	
-    	}
-    	else if(extreme.getRawButton(11)){
-    		Intake.climb();
-    	}
-    	else{
+    	else if(Intake.isIntakeOn() && !Intake.isLimit()){ //when limit IS pushed
     		Intake.intakeOff();
     	}
+    	
+    	else if(!Intake.isIntakeOn()){
+    		if(xBoxOperate.getRawAxis(3) > 0.5){
+    			Intake.intakeRev();    	
+    		}
+    		else if(xBoxOperate.getRawButton(1)){
+    			Intake.climb();
+    		}
+    		else{
+    			Intake.intakeOff();
+    		}
+    	}
+    	
+    	prev = xBoxOperate.getRawAxis(2) > 0.5 ? 0:1;
+    	
+		SmartDashboard.putNumber("rigt encoder value teleop", DriveBase.rightEncoder());
+		SmartDashboard.putNumber("left encoder value teleop", DriveBase.leftEncoder());
+    	
+		SmartDashboard.putNumber("yaw teleop", DriveBase.getYaw());
+		
+		if (!Intake.isLimit()){
+			SmartDashboard.putNumber("limit pressed", 1);
+		}
+		else{
+			SmartDashboard.putNumber("limit pressed", 0);
+		}
     	
     }
     	
