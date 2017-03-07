@@ -35,10 +35,10 @@ public class DriveBase{
     	bLeft.set(constants.masterLeftId);
 		bLeft.enableBrakeMode(true);
 
-    	rightEncoder = new Encoder(0, 1, false, EncodingType.k4X);
+    	rightEncoder = new Encoder(2, 3, true, EncodingType.k4X);
     	rightEncoder.setDistancePerPulse(4 * Math.PI/360);
     	rightEncoder.setSamplesToAverage(1);
-    	leftEncoder = new Encoder(2, 3, true, EncodingType.k4X);
+    	leftEncoder = new Encoder(0, 1, false, EncodingType.k4X);
     	leftEncoder.setDistancePerPulse(4 * Math.PI/360);
     	rightEncoder.setSamplesToAverage(1);
     	

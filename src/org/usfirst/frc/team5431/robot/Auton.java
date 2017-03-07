@@ -19,9 +19,16 @@ class Auton{
 	}
 	
 	static boolean turned(double degrees){
-		if (DriveBase.getYaw() >= degrees){
-			return true;
+		if (degrees < 0){
+			if (DriveBase.getYaw() <= degrees){
+				return true;
+			}
 		}
+		else 
+			if (DriveBase.getYaw() >= degrees){
+				return true;
+			}
+
 		return false;
 	}
 	
@@ -30,7 +37,7 @@ class Auton{
 	}
 	
 	static void driveForward(double power){
-		DriveBase.driver(-power, -power - 0.14);
+		DriveBase.driver(-power, -power - 0.12);
 	}
 	
 	static void driveBackward(double power){
@@ -173,7 +180,7 @@ class Auton{
 		driveForward(0.3);
 		Intake.intakeOff();
 		Intake.flipperOff();
-		if(travelled(77))
+		if(travelled(76))
 		{
 			state = 30;
 		}
@@ -185,7 +192,7 @@ class Auton{
 		break;
 	case 40:
 		turnLeft(0.3);
-		if(turned(54))
+		if(turned(-52))
 		{
 			state = 50;
 		}
@@ -219,5 +226,9 @@ class Auton{
 		//Um . . .
 		break;
 		}
+	SmartDashboard.putNumber("rigt encoder value auton", DriveBase.rightEncoder());
+	SmartDashboard.putNumber("left encoder value auton", DriveBase.leftEncoder());
+	SmartDashboard.putNumber("yaw auton", DriveBase.getYaw());
 	}
+	
 }
