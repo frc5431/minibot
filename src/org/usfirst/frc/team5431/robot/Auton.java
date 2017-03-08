@@ -37,7 +37,7 @@ class Auton{
 	}
 	
 	static void driveForward(double power){
-		double distanceDiff = DriveBase.leftEncoder() - DriveBase.rightEncoder();
+		/*double distanceDiff = DriveBase.leftEncoder() - DriveBase.rightEncoder();
 		
 		double diffRatio = 0.3;
 		
@@ -50,7 +50,8 @@ class Auton{
 			DriveBase.driver(wantedPower + newPower, wantedPower - newPower);
 		} else {
 			DriveBase.driver(wantedPower - newPower, wantedPower + newPower);
-		}
+		}*/
+		DriveBase.driver(-power,-power);
 		//DriveBase.driver(-power, -power - 0.115);
 	}
 	

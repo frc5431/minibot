@@ -11,10 +11,10 @@ import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.cscore.CvSink;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.CameraServer;
 import org.usfirst.frc.team5431.robot.*;
-import org.usfirst.frc.team5431.robot.DrivePID.DriveInputSource;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -27,14 +27,12 @@ import org.usfirst.frc.team5431.robot.DrivePID.DriveInputSource;
 public class Robot extends IterativeRobot {
 	Joystick xBoxDrive;
 	Joystick xBoxOperate;
+	DrivePID drivePid;
 	//DriveBase drive;
 	int flipperToggle = 0;
 	boolean isFlipperDown = true;
 	int prev = 0;
 	NetworkTable table;
-	public static DrivePID.DriveInputSource drivePIDInput;
-	public static DrivePID.DriveOutputSource drivePIDOutput;
-	public static PIDController autoLeftDriveController;
 	
     public void robotInit() {
     	//Auton auton = new Auton();
@@ -43,27 +41,33 @@ public class Robot extends IterativeRobot {
     	//enc2 = new Encoder(2, 3, false, Encoder.EncodingType.k4X); 
     	//drive = new DriveBase();
     	//Intake = new Intake();
+    	drivePid = new DrivePID();
+    	
     	xBoxDrive = new Joystick(0);
     	xBoxOperate = new Joystick(1);
     	NetworkTable.initialize();
     	SmartDashboard.putNumber("go to hel", 2);
     	SmartDashboard.putBoolean("gearIn", false);
     	table = NetworkTable.getTable("copernicus");
-    	UsbCamera lifecam = CameraServer.getInstance().startAutomaticCapture();
-    	lifecam.setFPS(30);
-    	lifecam.setResolution(480, 360);
-//    	lifecam.setFPS(1);
-//    	lifecam.setResolution(180, 180);
+    	
+    	new Thread(() -> {
+            UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
+            camera.setResolution(320,240);
+            camera.setFPS(30);
+        }).start();
+    	
+    	
+    	
 
     	//driveLeftPIDInput = new DrivePID.DriveInputSource(1);
     	//driveRightPIDInput = new DrivePID.DriveInputSource(2);
-    	drivePIDOutput = new DrivePID.DriveOutputSource();
+    	/*drivePIDOutput = new DrivePID.DriveOutputSource();
     	
     	autoLeftDriveController = new PIDController(1, 0, 0, 0, drivePIDInput, drivePIDOutput);
     	autoLeftDriveController.setInputRange(-1000, 1000);
     	autoLeftDriveController.setAbsoluteTolerance(0.5);
     	autoLeftDriveController.setOutputRange(-0.5, 0.5);
-    	autoLeftDriveController.setToleranceBuffer(40);
+    	autoLeftDriveController.setToleranceBuffer(40);*/
     	
     	
     	
@@ -89,8 +93,9 @@ public class Robot extends IterativeRobot {
     
     public void autonomousPeriodic() {
     	SmartDashboard.putNumber("auton??", 1);
-    	Auton.run(4);
-    }
+    	Auton.DriveForward();
+    	//Auton.run(4);
+    } 
 
     /**
      * This function is called periodically during operator control
@@ -98,12 +103,12 @@ public class Robot extends IterativeRobot {
     public void teleopInit(){
     	DriveBase.resetEncoders();
     	DriveBase.resetAHRS();
+    	drivePid.driveController.enable();
     	//DriveBase.driveBaseInit();
 
     }
     
     public void teleopPeriodic() {
-    	
     	table.putBoolean("gearIn", Intake.isLimit());
     	table.putBoolean("intake", Intake.isIntakeOn());
     	table.putNumber("timeLeft", Timer.getMatchTime());
