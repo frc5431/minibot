@@ -25,6 +25,7 @@ public class Intake {
     	intakeMotor = new CANTalon(constants.Intake);
     	flipper = new CANTalon(constants.Flipper);
     	climber = new CANTalon(constants.Climber);
+    	climber.setInverted(true);
     }
     
     public static void climb(){

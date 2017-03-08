@@ -36,10 +36,10 @@ class Auton{
 		DriveBase.driver(0, 0);
 	}
 	
-	static void driveForward(double power){
-		/*double distanceDiff = DriveBase.leftEncoder() - DriveBase.rightEncoder();
+	static void driveForward(double Power){		
+		double distanceDiff = DriveBase.getYaw() / 4;//DriveBase.leftEncoder() - DriveBase.rightEncoder();
 		
-		double diffRatio = 0.3;
+		double diffRatio = 0.1;
 		
 		double newPower = (distanceDiff * diffRatio) / 3;
 		
@@ -47,11 +47,11 @@ class Auton{
 		
 		
 		if(newPower > 0) {
-			DriveBase.driver(wantedPower + newPower, wantedPower - newPower);
+			DriveBase.driver(wantedPower, wantedPower - newPower);
 		} else {
-			DriveBase.driver(wantedPower - newPower, wantedPower + newPower);
-		}*/
-		DriveBase.driver(-power,-power);
+			DriveBase.driver(wantedPower + newPower, wantedPower);
+		}
+		//DriveBase.driver(-power,-power);
 		//DriveBase.driver(-power, -power - 0.115);
 	}
 	
@@ -60,11 +60,15 @@ class Auton{
 	}
 	
 	static void turnRight(double power){
-		DriveBase.driver(-power, power);
+		DriveBase.masterLeft.set(power);
+		DriveBase.masterRight.set(power);
+		//DriveBase.driver(-power, power);
 	}
 	
 	static void turnLeft(double power){
-		DriveBase.driver(power, -power - 0.115);
+		DriveBase.masterLeft.set(-power);
+		DriveBase.masterRight.set(-power);
+		//DriveBase.driver(power, -power);
 	}
 	
 	static void run(int selection)
@@ -109,6 +113,9 @@ class Auton{
 			stayStill();
 			break;
 		}
+		SmartDashboard.putNumber("rigt encoder value auton", DriveBase.rightEncoder());
+		SmartDashboard.putNumber("left encoder value auton", DriveBase.leftEncoder());
+		SmartDashboard.putNumber("yaw auton", DriveBase.getYaw());
 
 	}
 	
@@ -168,27 +175,41 @@ class Auton{
 	}
 	
 	static void redMiddle(){
-		switch(state)
-		{
+		switch(state){
 		case 10:
 			driveForward(0.3);
-			if(travelled(100)){
-				state = 20;
+			Intake.intakeOff();
+			Intake.flipperOff();
+			if(travelled(30))
+			{
+				state = 70;
 			}
 			break;
-			
-		case 20:
+		case 70:
+			stayStill();
 			Intake.placeGear();
+			Timer.delay(1.5);
+			state = 71;
+			break;
+		case 71:
 			driveForward(0.3);
 			if(travelled(5)){
-				state = 30;
+				state = 80;
+				DriveBase.resetEncoders();
 			}
 			break;
-		case 30:
+		case 80:
 			stayStill();
 			Intake.intakeOff();
 			Intake.flipperOff();
-	}
+		default:
+			//Um . . .
+			break;
+			}
+		SmartDashboard.putNumber("rigt encoder value auton", DriveBase.rightEncoder());
+		SmartDashboard.putNumber("left encoder value auton", DriveBase.leftEncoder());
+		SmartDashboard.putNumber("yaw auton", DriveBase.getYaw());
+		SmartDashboard.putNumber("current state", state);
 }
 	
 	static void redRight(){
@@ -197,7 +218,7 @@ class Auton{
 		driveForward(0.3);
 		Intake.intakeOff();
 		Intake.flipperOff();
-		if(travelled(62))
+		if(travelled(56))
 		{
 			state = 30;
 		}
@@ -208,9 +229,10 @@ class Auton{
 		state = 40;
 		break;
 	case 40:
-		turnLeft(0.3);
-		if(turned(-49.5))
+		turnLeft(0.15);
+		if(turned(-38))
 		{
+			DriveBase.resetAHRS();
 			state = 50;
 		}
 		break;
@@ -218,12 +240,13 @@ class Auton{
 		stayStill();
 		Timer.delay(2);//BAD PRACTICE
 		DriveBase.resetEncoders();
+		DriveBase.resetAHRS();
 		state = 60;
 		break;
 		
 	case 60:
 		driveForward(0.3);
-		if(travelled(55))
+		if(travelled(52))
 		{
 			state = 70;
 		}
@@ -236,15 +259,8 @@ class Auton{
 		break;
 	case 71:
 		driveForward(0.3);
-		if(travelled(2)){
+		if(travelled(6)){
 			state = 75;
-			DriveBase.resetEncoders();
-		}
-		break;
-	case 75:
-		driveBackward(0.3);
-		if (travelled(-8)){
-			state = 80;
 		}
 		break;
 	case 80:

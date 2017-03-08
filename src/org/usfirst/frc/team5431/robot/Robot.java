@@ -27,7 +27,7 @@ import org.usfirst.frc.team5431.robot.*;
 public class Robot extends IterativeRobot {
 	Joystick xBoxDrive;
 	Joystick xBoxOperate;
-	DrivePID drivePid;
+	//DrivePID drivePid;
 	//DriveBase drive;
 	int flipperToggle = 0;
 	boolean isFlipperDown = true;
@@ -41,7 +41,7 @@ public class Robot extends IterativeRobot {
     	//enc2 = new Encoder(2, 3, false, Encoder.EncodingType.k4X); 
     	//drive = new DriveBase();
     	//Intake = new Intake();
-    	drivePid = new DrivePID();
+    	//drivePid = new DrivePID();
     	
     	xBoxDrive = new Joystick(0);
     	xBoxOperate = new Joystick(1);
@@ -52,8 +52,8 @@ public class Robot extends IterativeRobot {
     	
     	new Thread(() -> {
             UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
-            camera.setResolution(320,240);
-            camera.setFPS(30);
+            camera.setResolution(360,240);
+            //camera.setFPS(30);
         }).start();
     	
     	
@@ -81,7 +81,10 @@ public class Robot extends IterativeRobot {
     	
     	DriveBase.resetEncoders();
     	DriveBase.resetAHRS();
-
+    	//drivePid.driveController.disable();
+    	//drivePid.driveController.enable();
+    	DriveBase.masterRight.setVoltageRampRate(0);
+    	DriveBase.masterLeft.setVoltageRampRate(0);
     	//autoLeftDriveController.enable();
     	//autoLeftDriveController.reset();
     	//autoLeftDriveController.setSetpoint(0.5);
@@ -93,8 +96,9 @@ public class Robot extends IterativeRobot {
     
     public void autonomousPeriodic() {
     	SmartDashboard.putNumber("auton??", 1);
-    	Auton.DriveForward();
-    	//Auton.run(4);
+    	//Auton.DriveForward();
+    	Auton.redMiddle();
+    
     } 
 
     /**
@@ -103,9 +107,8 @@ public class Robot extends IterativeRobot {
     public void teleopInit(){
     	DriveBase.resetEncoders();
     	DriveBase.resetAHRS();
-    	drivePid.driveController.enable();
     	//DriveBase.driveBaseInit();
-
+    	//drivePid.driveController.disable();
     }
     
     public void teleopPeriodic() {

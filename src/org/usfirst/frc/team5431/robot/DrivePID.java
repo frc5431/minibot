@@ -10,23 +10,21 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class DrivePID implements PIDOutput{
 	PIDController driveController;
 	PidInput input;
+	
 	public DrivePID() {
 		input = new PidInput();
-		driveController = new PIDController(1, 0, 0, input, this);
+		driveController = new PIDController(0.02, 0, 0, input, this);
 		driveController.setInputRange(-1000, 1000);
-		driveController.setOutputRange(-0.5, 0.5);
+		driveController.setOutputRange(-0.2, 0.2);
 		driveController.setAbsoluteTolerance(2);
 		driveController.setContinuous(true);
 		driveController.setSetpoint(0);
-		
 	}
-
+	
 	@Override
 	public void pidWrite(double output) {
 		System.out.print(output);
-		//System.out.print("a");
+		DriveBase.driver(-0.35+output, -0.35-output);
 	}
-
 	
-
 }
