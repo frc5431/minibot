@@ -37,7 +37,21 @@ class Auton{
 	}
 	
 	static void driveForward(double power){
-		DriveBase.driver(-power, -power - 0.12);
+		double distanceDiff = DriveBase.leftEncoder() - DriveBase.rightEncoder();
+		
+		double diffRatio = 0.3;
+		
+		double newPower = (distanceDiff * diffRatio) / 3;
+		
+		double wantedPower = -0.3;
+		
+		
+		if(newPower > 0) {
+			DriveBase.driver(wantedPower + newPower, wantedPower - newPower);
+		} else {
+			DriveBase.driver(wantedPower - newPower, wantedPower + newPower);
+		}
+		//DriveBase.driver(-power, -power - 0.115);
 	}
 	
 	static void driveBackward(double power){
@@ -49,7 +63,7 @@ class Auton{
 	}
 	
 	static void turnLeft(double power){
-		DriveBase.driver(power, -power);
+		DriveBase.driver(power, -power - 0.115);
 	}
 	
 	static void run(int selection)
@@ -71,6 +85,8 @@ class Auton{
 		case 4:
 			redRight();
 			break;
+		case 5:
+			testPID();
 		default:
 			break;
 		}
@@ -180,7 +196,7 @@ class Auton{
 		driveForward(0.3);
 		Intake.intakeOff();
 		Intake.flipperOff();
-		if(travelled(76))
+		if(travelled(62))
 		{
 			state = 30;
 		}
@@ -192,7 +208,7 @@ class Auton{
 		break;
 	case 40:
 		turnLeft(0.3);
-		if(turned(-52))
+		if(turned(-49.5))
 		{
 			state = 50;
 		}
@@ -206,15 +222,27 @@ class Auton{
 		
 	case 60:
 		driveForward(0.3);
-		if(travelled(32))
+		if(travelled(55))
 		{
 			state = 70;
 		}
 		break;
 	case 70:
+		stayStill();
 		Intake.placeGear();
+		Timer.delay(1.5);
+		state = 71;
+		break;
+	case 71:
 		driveForward(0.3);
-		if(travelled(3)){
+		if(travelled(2)){
+			state = 75;
+			DriveBase.resetEncoders();
+		}
+		break;
+	case 75:
+		driveBackward(0.3);
+		if (travelled(-8)){
 			state = 80;
 		}
 		break;
@@ -229,6 +257,26 @@ class Auton{
 	SmartDashboard.putNumber("rigt encoder value auton", DriveBase.rightEncoder());
 	SmartDashboard.putNumber("left encoder value auton", DriveBase.leftEncoder());
 	SmartDashboard.putNumber("yaw auton", DriveBase.getYaw());
+	SmartDashboard.putNumber("current state", state);
+	}
+	
+	static void testPID(){
+		double distanceDiff = DriveBase.leftEncoder() - DriveBase.rightEncoder();
+		
+		double diffRatio = 0.3;
+		
+		double newPower = (distanceDiff * diffRatio) / 3;
+		
+		double wantedPower = -0.3;
+		
+		
+		if(newPower > 0) {
+			DriveBase.driver(wantedPower + newPower, wantedPower - newPower);
+		} else {
+			DriveBase.driver(wantedPower - newPower, wantedPower + newPower);
+		}
+		
+		SmartDashboard.putNumber("distance Diff", distanceDiff);
 	}
 	
 }

@@ -70,15 +70,15 @@ public class Intake {
     
     public static void placeGear(){
     	flipper.set(0.5);
-    	Timer.delay(0.4);
+    	Timer.delay(0.8);
     	intakeMotor.set(1);
-    	Timer.delay(0.2);
+    	Timer.delay(0.8);
     	SmartDashboard.putNumber("did delay work", 1);
     	intakeOff();
     }
     
     public static boolean isLimit(){
-    	return limit.get();
+    	return !limit.get();
     }
     
     
