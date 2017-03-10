@@ -345,7 +345,7 @@ class Auton{
 		}
 		break;
 	case 72:
-		for(int i = 0; i < 500; i++) {
+		for(int i = 0; i < 500; i++) { 
 			if(i > 300) DriveBase.driver(0.3, 0.3);
 			Intake.flipperDown();
 			Timer.delay(1/100);
