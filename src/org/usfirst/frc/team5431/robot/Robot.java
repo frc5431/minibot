@@ -104,7 +104,8 @@ public class Robot extends IterativeRobot {
     
     public void autonomousPeriodic() {
     	SmartDashboard.putNumber("auton??", 1);
-    	Auton.run(1);
+    	//Auton.run(1);
+    	Auton.redMiddle();
     	//run((int)table.getNumber("autonSelect", 0.0)); //1 is drive forward
     	//Auton.redMiddle();
     

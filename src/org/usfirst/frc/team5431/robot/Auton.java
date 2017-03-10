@@ -177,10 +177,10 @@ class Auton{
 	static void redMiddle(){
 		switch(state){
 		case 10:
-			driveForward(0.3);
+			driveForward(0.25);
 			Intake.intakeOff();
 			Intake.flipperOff();
-			if(travelled(30))
+			if(travelled(68))
 			{
 				state = 70;
 			}
@@ -188,7 +188,7 @@ class Auton{
 		case 70:
 			stayStill();
 			Intake.placeGear();
-			Timer.delay(1.5);
+			Timer.delay(2);
 			state = 71;
 			break;
 		case 71:
@@ -202,6 +202,20 @@ class Auton{
 			stayStill();
 			Intake.intakeOff();
 			Intake.flipperOff();
+			Timer.delay(0.3);
+			Intake.outGear();
+			state = 90;
+		case 90:
+			driveForward(0.3);
+			Intake.outGear();
+			if(travelled(2)) {
+				state = 100;
+			}
+		case 100:
+			stayStill();
+			//Intake.intakeOff();
+			Intake.flipperOff();
+			Intake.outGear();
 		default:
 			//Um . . .
 			break;
