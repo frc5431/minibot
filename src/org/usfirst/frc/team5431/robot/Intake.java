@@ -70,8 +70,8 @@ public class Intake {
     }
     
     public static void placeGear(){
-    	flipper.set(-0.5);
-    	Timer.delay(0.9);
+    	flipper.set(-0.6);
+    	Timer.delay(0.4);
     	intakeMotor.set(1);
     	Timer.delay(0.8);
     	SmartDashboard.putNumber("did delay work", 1);

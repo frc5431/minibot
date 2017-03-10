@@ -291,6 +291,82 @@ class Auton{
 	SmartDashboard.putNumber("current state", state);
 	}
 	
+	static void blueLeft(){
+	switch(state){
+	case 10:
+		driveForward(0.3);
+		Intake.intakeOff();
+		Intake.flipperOff();
+		if(travelled(66))
+		{
+			state = 30;
+		}
+		break;
+	case 30:
+		stayStill();
+		Timer.delay(2);//Delays everything - NOT GOOD PRACTICE
+		state = 40;
+		break;
+	case 40:
+		turnRight(0.15);
+		if(turned(46))
+		{
+			DriveBase.resetAHRS();
+			state = 50;
+		}
+		break;
+	case 50:
+		stayStill();
+		Timer.delay(0.5);//BAD PRACTICE
+		DriveBase.resetEncoders();
+		DriveBase.resetAHRS();
+		state = 60;
+		break;
+		
+	case 60:
+		driveForward(0.3);
+		if(travelled(41))
+		{
+			state = 70;
+		}
+		break;
+	case 70:
+		stayStill();
+		Intake.placeGear();
+		Timer.delay(1.5);
+		state = 71;
+		
+		break;
+	case 71:
+		driveForward(0.3);
+		Intake.outGear();
+		if(travelled(1)){
+			state = 72;
+		}
+		break;
+	case 72:
+		for(int i = 0; i < 500; i++) {
+			if(i > 300) DriveBase.driver(0.3, 0.3);
+			Intake.flipperDown();
+			Timer.delay(1/100);
+		}
+		state = 80;
+		break;
+	case 80:
+		stayStill();
+		//Intake.intakeOff();
+		Intake.flipperOff();
+		Intake.outGear();
+	default:
+		//Um . . .
+		break;
+		}
+	SmartDashboard.putNumber("rigt encoder value auton", DriveBase.rightEncoder());
+	SmartDashboard.putNumber("left encoder value auton", DriveBase.leftEncoder());
+	SmartDashboard.putNumber("yaw auton", DriveBase.getYaw());
+	SmartDashboard.putNumber("current state", state);
+	}
+	
 	static void testPID(){
 		double distanceDiff = DriveBase.leftEncoder() - DriveBase.rightEncoder();
 		
