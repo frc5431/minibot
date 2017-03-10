@@ -34,6 +34,8 @@ public class Robot extends IterativeRobot {
 	int prev = 0;
 	NetworkTable table;
 	
+	LED led;
+	
     public void robotInit() {
     	//Auton auton = new Auton();
     	//Auton.init();
@@ -53,10 +55,10 @@ public class Robot extends IterativeRobot {
     	new Thread(() -> {
             UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
             camera.setResolution(360,240);
-            //camera.setFPS(30);
+            camera.setFPS(30);
         }).start();
     	
-    	
+    	LED.init();
     	
 
     	//driveLeftPIDInput = new DrivePID.DriveInputSource(1);
@@ -74,6 +76,12 @@ public class Robot extends IterativeRobot {
     	DriveBase.driveBaseInit();
     	Intake.intakeInit();
 
+    }
+    
+    public void robotPeriodic(){
+     	LED.setTimeElapsed(Timer.getMatchTime());
+
+    	LED.setGear(Intake.isLimit());
     }
     
     public void autonomousInit() {
@@ -96,8 +104,9 @@ public class Robot extends IterativeRobot {
     
     public void autonomousPeriodic() {
     	SmartDashboard.putNumber("auton??", 1);
-    	//Auton.DriveForward();
-    	Auton.redMiddle();
+    	Auton.run(1);
+    	//run((int)table.getNumber("autonSelect", 0.0)); //1 is drive forward
+    	//Auton.redMiddle();
     
     } 
 
@@ -112,9 +121,10 @@ public class Robot extends IterativeRobot {
     }
     
     public void teleopPeriodic() {
-    	table.putBoolean("gearIn", Intake.isLimit());
-    	table.putBoolean("intake", Intake.isIntakeOn());
-    	table.putNumber("timeLeft", Timer.getMatchTime());
+    	//table.putBoolean("gearIn", Intake.isLimit());
+    	//table.putBoolean("intake", Intake.isIntakeOn());
+    	SmartDashboard.putBoolean("gearIn", Intake.isLimit());
+    	SmartDashboard.putBoolean("IsIntaking", Intake.isIntakeOn());
       	//Intake.intakeOn();
     	//Intake.setFlipperPosition(1);
     	DriveBase.driver(xBoxDrive.getRawAxis(1), xBoxDrive.getRawAxis(5));
@@ -127,8 +137,7 @@ public class Robot extends IterativeRobot {
     		Intake.flipperOff();
     		
     	}
-    	
-    	
+    	    	
     	if(prev > (xBoxOperate.getRawAxis(2) > 0.5 ? 0:1)){
     		Intake.toggleIntake();
     	}

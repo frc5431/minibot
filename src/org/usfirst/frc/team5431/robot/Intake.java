@@ -38,11 +38,11 @@ public class Intake {
     }
     
     public static void flipperDown(){
-    	flipper.set(1);
+    	flipper.set(-1);
     }
     
     public static void flipperUp(){
-    	flipper.set(-1);
+    	flipper.set(1);
     }
     
     public static void flipperOff(){
