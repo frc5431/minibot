@@ -58,7 +58,7 @@ public class Robot extends IterativeRobot {
             camera.setFPS(30);
         }).start();
     	
-    	LED.init();
+    	//LED.init();
     	
 
     	//driveLeftPIDInput = new DrivePID.DriveInputSource(1);
@@ -79,9 +79,9 @@ public class Robot extends IterativeRobot {
     }
     
     public void robotPeriodic(){
-     	LED.setTimeElapsed(Timer.getMatchTime());
+     	//LED.setTimeElapsed(Timer.getMatchTime());
 
-    	LED.setGear(Intake.isLimit());
+    	//.setGear(Intake.isLimit());
     }
     
     public void autonomousInit() {

@@ -70,7 +70,7 @@ public class Intake {
     }
     
     public static void placeGear(){
-    	flipper.set(0.5);
+    	flipper.set(-0.5);
     	Timer.delay(0.8);
     	intakeMotor.set(1);
     	Timer.delay(0.8);
