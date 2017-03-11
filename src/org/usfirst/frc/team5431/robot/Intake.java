@@ -28,7 +28,11 @@ public class Intake {
     	climber.setInverted(true);
     }
     
-    public static void climb(){
+    public static void climbSlow() {
+    	climber.set(-0.3);
+    }
+    
+    public static void climb() {
     	climber.set(-1);
     }
     
@@ -71,9 +75,11 @@ public class Intake {
     
     public static void placeGear(){
     	flipper.set(-0.6);
-    	Timer.delay(0.4);
+    	Timer.delay(1);
     	intakeMotor.set(1);
-    	Timer.delay(0.8);
+    	Timer.delay(0.25); //Timer delay (0.2 seconds)
+    	flipper.set(0); //Remove
+    	Timer.delay(0.75); //Remove
     	SmartDashboard.putNumber("did delay work", 1);
     	intakeOff();
     }

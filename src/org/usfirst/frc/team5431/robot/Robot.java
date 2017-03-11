@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.cscore.CvSink;
 import edu.wpi.cscore.UsbCamera;
@@ -33,6 +34,8 @@ public class Robot extends IterativeRobot {
 	boolean isFlipperDown = true;
 	int prev = 0;
 	NetworkTable table;
+	//SendableChooser<Integer> autoChooser;
+	int autoSelected = 1;
 		
     public void robotInit() {
     	//Auton auton = new Auton();
@@ -48,6 +51,7 @@ public class Robot extends IterativeRobot {
     	NetworkTable.initialize();
     	SmartDashboard.putNumber("go to hel", 2);
     	SmartDashboard.putBoolean("gearIn", false);
+    	SmartDashboard.putNumber("AutonomousSelection", 3);
     	table = NetworkTable.getTable("copernicus");
     	
     	new Thread(() -> {
@@ -57,6 +61,13 @@ public class Robot extends IterativeRobot {
         }).start();
     	
     	LED.init();
+    	
+    	//autoChooser = new SendableChooser<Integer>();
+    	//autoChooser.addObject("StayStill", 0);
+    	//autoChooser.addDefault("BaseLine", 1);
+    	//autoChooser.addObject("TurnRight(Gear)", 2);
+    	//autoChooser.addObject("Middle(Gear)", 3);
+    	//autoChooser.addObject("TurnLeft(Gear)", 4);
     	
 
     	//driveLeftPIDInput = new DrivePID.DriveInputSource(1);
@@ -84,6 +95,7 @@ public class Robot extends IterativeRobot {
     
     public void autonomousInit() {
     	Auton.state = 10;
+    	autoSelected = (int) SmartDashboard.getNumber("AutonomousSelection", 3);//autoChooser.getSelected();
     	
     	DriveBase.resetEncoders();
     	DriveBase.resetAHRS();
@@ -102,8 +114,8 @@ public class Robot extends IterativeRobot {
     
     public void autonomousPeriodic() {
     	SmartDashboard.putNumber("auton??", 1);
-    	//Auton.run(1);
-    	Auton.redMiddle();
+    	Auton.run(autoSelected);
+    	//Auton.redMiddle();
     	//Auton.blueLeft();
     	//Auton.redRight();
     	//run((int)table.getNumber("autonSelect", 0.0)); //1 is drive forward
@@ -142,13 +154,19 @@ public class Robot extends IterativeRobot {
     	if(prev > (xBoxOperate.getRawAxis(2) > 0.5 ? 0:1)){
     		Intake.toggleIntake();
     	}
-    	else if(Intake.isIntakeOn() && Intake.isLimit()){ //when limit IS pushed
+    	else if(xBoxOperate.getRawButton(4)) {
+    		Intake.intakeOn();
+    	}
+    	else if((Intake.isIntakeOn() && Intake.isLimit() && !xBoxOperate.getRawButton(4)) || xBoxOperate.getRawButton(2)){ //when limit IS pushed
     		Intake.intakeOff();
     	}
     	
     	else if(!Intake.isIntakeOn()){
     		if(xBoxOperate.getRawAxis(3) > 0.5){
     			Intake.intakeRev();    	
+    		}
+    		else if(xBoxOperate.getRawButton(3)) {
+    			Intake.climbSlow();
     		}
     		else if(xBoxOperate.getRawButton(1)){
     			Intake.climb();
