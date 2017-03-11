@@ -43,7 +43,7 @@ public class LED {
 	
 	public static void setTimeElapsed(double d){
 		try{
-			boolean value = d > 120;
+			boolean value = d < 30;
 			if(value != previousTimeState){
 				if(value){
 					serial.writeString("c");

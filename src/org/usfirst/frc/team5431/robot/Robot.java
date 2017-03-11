@@ -33,9 +33,7 @@ public class Robot extends IterativeRobot {
 	boolean isFlipperDown = true;
 	int prev = 0;
 	NetworkTable table;
-	
-	LED led;
-	
+		
     public void robotInit() {
     	//Auton auton = new Auton();
     	//Auton.init();
@@ -58,7 +56,7 @@ public class Robot extends IterativeRobot {
             camera.setFPS(30);
         }).start();
     	
-    	//LED.init();
+    	LED.init();
     	
 
     	//driveLeftPIDInput = new DrivePID.DriveInputSource(1);
@@ -79,9 +77,9 @@ public class Robot extends IterativeRobot {
     }
     
     public void robotPeriodic(){
-     	//LED.setTimeElapsed(Timer.getMatchTime());
+     	LED.setTimeElapsed(150 - Timer.getMatchTime());
 
-    	//.setGear(Intake.isLimit());
+    	LED.setGear(Intake.isLimit());
     }
     
     public void autonomousInit() {
@@ -105,8 +103,9 @@ public class Robot extends IterativeRobot {
     public void autonomousPeriodic() {
     	SmartDashboard.putNumber("auton??", 1);
     	//Auton.run(1);
-    	//Auton.redMiddle();
-    	Auton.blueLeft();
+    	Auton.redMiddle();
+    	//Auton.blueLeft();
+    	//Auton.redRight();
     	//run((int)table.getNumber("autonSelect", 0.0)); //1 is drive forward
     	//Auton.redMiddle();
     

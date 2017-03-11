@@ -208,9 +208,17 @@ class Auton{
 		case 90:
 			driveForward(0.3);
 			Intake.outGear();
-			if(travelled(2)) {
-				state = 100;
+			if(travelled(1)) {
+				state = 72;
 			}
+		case 72:
+			for(int i = 0; i < 500; i++) { 
+				if(i > 300) DriveBase.driver(0.3, 0.3);
+				Intake.flipperDown();
+				Timer.delay(1/100);
+			}
+			state = 100;
+			break;
 		case 100:
 			stayStill();
 			//Intake.intakeOff();
@@ -232,7 +240,7 @@ class Auton{
 		driveForward(0.3);
 		Intake.intakeOff();
 		Intake.flipperOff();
-		if(travelled(56))
+		if(travelled(66))
 		{
 			state = 30;
 		}
@@ -244,7 +252,7 @@ class Auton{
 		break;
 	case 40:
 		turnLeft(0.15);
-		if(turned(-38))
+		if(turned(-46))
 		{
 			DriveBase.resetAHRS();
 			state = 50;
@@ -252,7 +260,7 @@ class Auton{
 		break;
 	case 50:
 		stayStill();
-		Timer.delay(2);//BAD PRACTICE
+		Timer.delay(0.25);//BAD PRACTICE
 		DriveBase.resetEncoders();
 		DriveBase.resetAHRS();
 		state = 60;
@@ -260,7 +268,7 @@ class Auton{
 		
 	case 60:
 		driveForward(0.3);
-		if(travelled(52))
+		if(travelled(41))
 		{
 			state = 70;
 		}
@@ -273,14 +281,23 @@ class Auton{
 		break;
 	case 71:
 		driveForward(0.3);
-		if(travelled(6)){
-			state = 75;
+		if(travelled(1)){
+			state = 72;
 		}
+		break;
+	case 72:
+		for(int i = 0; i < 500; i++) { 
+			if(i > 300) DriveBase.driver(0.3, 0.3);
+			Intake.flipperDown();
+			Timer.delay(1/100);
+		}
+		state = 80;
 		break;
 	case 80:
 		stayStill();
-		Intake.intakeOff();
+		//Intake.intakeOff();
 		Intake.flipperOff();
+		Intake.outGear();
 	default:
 		//Um . . .
 		break;
