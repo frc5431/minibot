@@ -29,7 +29,7 @@ public class Intake {
     }
     
     public static void climbSlow() {
-    	climber.set(-0.3);
+    	climber.set(-0.45);
     }
     
     public static void climb() {
