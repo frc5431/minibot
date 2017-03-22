@@ -16,6 +16,10 @@ import edu.wpi.cscore.CvSink;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.CameraServer;
 import org.usfirst.frc.team5431.robot.*;
+import org.usfirst.frc.team5431.utils.TitanDrive;
+import org.usfirst.frc.team5431.utils.TitanNavx;
+import org.usfirst.frc.team5431.utils.TitanTalon;
+
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -30,12 +34,18 @@ public class Robot extends IterativeRobot {
 	Joystick xBoxOperate;
 	//DrivePID drivePid;
 	//DriveBase drive;
+	CANTalon masterLeft, masterRight,bRight,bLeft;
 	int flipperToggle = 0;
 	boolean isFlipperDown = true;
 	int prev = 0;
 	NetworkTable table;
 	//SendableChooser<Integer> autoChooser;
 	int autoSelected = 1;
+	
+/*	TitanTalon frontLeft, frontRight, rearLeft, rearRight;
+	TitanDrive drive;
+	TitanNavx navx;
+	RobotDrive newDrive;*/
 		
     public void robotInit() {
     	//Auton auton = new Auton();
@@ -49,6 +59,7 @@ public class Robot extends IterativeRobot {
     	xBoxDrive = new Joystick(0);
     	xBoxOperate = new Joystick(1);
     	NetworkTable.initialize();
+    	SmartDashboard.putNumber("DIFRAT",0.0);
     	SmartDashboard.putNumber("go to hel", 2);
     	SmartDashboard.putBoolean("gearIn", false);
     	SmartDashboard.putNumber("AutonomousSelection", 3);
@@ -57,10 +68,60 @@ public class Robot extends IterativeRobot {
     	new Thread(() -> {
             UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
             camera.setResolution(360,240);
-            camera.setFPS(30);
+            camera.setFPS(30); 
         }).start();
     	
     	LED.init();
+    
+    	//navx = new TitanNavx();
+    	//navx.zeroYaw();
+    	
+    	/*frontLeft = new TitanTalon(constants.masterLeftId);
+    	frontRight = new TitanTalon(constants.masterRightId);
+    	rearLeft = new TitanTalon(constants.bLeftId);
+    	rearRight = new TitanTalon(constants.bRightId);
+    	
+    	drive = new TitanDrive(frontLeft, frontRight, rearLeft, rearRight);
+    	drive.setTurnBand(0.2);
+    	drive.setDriveBand(0.1);
+    	drive.setBrakeMode(false);
+    	drive.setSlopeHandler(0.85, 0.15);
+    	drive.setResetCountLimit(300);
+    	int reset[] = new int[] {0};
+    	
+    	drive.setDriveController(new TitanDrive.DriveController() {
+			@Override
+			public double getGlobalAngle() {
+				double navxAngle = navx.getYaw();
+				SmartDashboard.putNumber("NAVX_ANGLE", navxAngle);
+				return navxAngle; //get navx angle
+			}
+
+			@Override
+			public void resetGlobalAngle() {
+				SmartDashboard.putNumber("RESETNAVX", reset[0]++);
+				navx.zeroYaw();
+				navx.resetDisplacement();
+				navx.resetYaw();
+			}
+		});*/
+    	
+    	
+    	/*masterLeft = new CANTalon(constants.masterLeftId);
+    	masterRight = new CANTalon(constants.masterRightId);
+    	
+    	bLeft = new CANTalon(constants.bLeftId);
+    	bLeft.changeControlMode(CANTalon.TalonControlMode.Follower);
+    	bLeft.set(constants.masterLeftId);
+  
+    	
+    	
+    	bRight = new CANTalon(constants.bRightId);
+    	bRight.changeControlMode(CANTalon.TalonControlMode.Follower);
+    	bRight.set(constants.masterRightId);
+    	
+    	newDrive = new RobotDrive(masterLeft,masterRight);*/
+    	
     	
     	//autoChooser = new SendableChooser<Integer>();
     	//autoChooser.addObject("StayStill", 0);
@@ -106,6 +167,10 @@ public class Robot extends IterativeRobot {
     	//autoLeftDriveController.enable();
     	//autoLeftDriveController.reset();
     	//autoLeftDriveController.setSetpoint(0.5);
+    	
+    	DriveBase.driver(-0.3, -0.3);
+    	DriveBase.pidOutput.wantedPower = -0.3;
+    	DriveBase.enablePID();
     }
 
     /**
@@ -113,8 +178,9 @@ public class Robot extends IterativeRobot {
      */
     
     public void autonomousPeriodic() {
-    	SmartDashboard.putNumber("auton??", 1);
-    	Auton.run(autoSelected);
+    	/*SmartDashboard.putNumber("auton??", 1);
+    	Auton.run(autoSelected);*/
+    	//Auton.DriveForward();
     	//Auton.redMiddle();
     	//Auton.blueLeft();
     	//Auton.redRight();
@@ -128,16 +194,21 @@ public class Robot extends IterativeRobot {
      */
     public void teleopInit(){
     	DriveBase.resetEncoders();
+    	//drive.resetGlobalAngle();
     	DriveBase.resetAHRS();
+    	DriveBase.disablePID();
     	//DriveBase.driveBaseInit();
     	//drivePid.driveController.disable();
     }
     
     public void teleopPeriodic() {
+    	//drive.titanDrive(-xBoxDrive.getRawAxis(1), xBoxDrive.getRawAxis(4));
+    	//newDrive.arcadeDrive(xBoxDrive.getRawAxis(1), -xBoxDrive.getRawAxis(4), true);
     	//table.putBoolean("gearIn", Intake.isLimit());
     	//table.putBoolean("intake", Intake.isIntakeOn());
-    	SmartDashboard.putBoolean("gearIn", Intake.isLimit());
+    	SmartDashboard.putBoolean("gearIn", Intake.isLimit()); 
     	SmartDashboard.putBoolean("IsIntaking", Intake.isIntakeOn());
+    	
       	//Intake.intakeOn();
     	//Intake.setFlipperPosition(1);
     	DriveBase.driver(xBoxDrive.getRawAxis(1), xBoxDrive.getRawAxis(5));
@@ -159,6 +230,7 @@ public class Robot extends IterativeRobot {
     	}
     	else if((Intake.isIntakeOn() && Intake.isLimit() && !xBoxOperate.getRawButton(4)) || xBoxOperate.getRawButton(2)){ //when limit IS pushed
     		Intake.intakeOff();
+        	Intake.flipper.set(0.5);
     	}
     	
     	else if(!Intake.isIntakeOn()){
@@ -183,12 +255,12 @@ public class Robot extends IterativeRobot {
     	
 		SmartDashboard.putNumber("yaw teleop", DriveBase.getYaw());
 		
-		/*if (!Intake.isLimit()){
+		if (!Intake.isLimit()){
 			
 		}
 		else{
 			SmartDashboard.putBoolean("gearIn", false);
-		}*/
+		}
     	
     }
     	

@@ -54,12 +54,12 @@ public class Intake {
     }
     
     public static void intakeOn(){
-    	intakeMotor.set(-1);
-    	climber.set(-1);
+    	intakeMotor.set(1);
+    	//climber.set(-1);
     }
     
     public static void intakeRev(){
-    	intakeMotor.set(1);
+    	intakeMotor.set(-1);
     }
     
     public static void intakeOff(){

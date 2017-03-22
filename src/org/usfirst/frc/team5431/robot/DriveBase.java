@@ -4,6 +4,7 @@ import org.usfirst.frc.team5431.robot.constants;
 
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.SPI;
 
 import com.kauailabs.navx.frc.AHRS;
@@ -17,6 +18,9 @@ public class DriveBase{
     static Encoder rightEncoder;
     static Encoder leftEncoder;
     static AHRS ahrs;
+    static PIDController drivePID;
+    static DriveBasePIDSource pidSource;
+    static DriveBasePIDOutput pidOutput;
     
 	public static void driveBaseInit(){
 		masterRight = new CANTalon(constants.masterRightId);
@@ -36,13 +40,33 @@ public class DriveBase{
 		bLeft.enableBrakeMode(true);
 
     	rightEncoder = new Encoder(0, 1, false, EncodingType.k4X);
-    	rightEncoder.setDistancePerPulse(4 * Math.PI/360);
+    	rightEncoder.setDistancePerPulse(4  * Math.PI/360);
     	rightEncoder.setSamplesToAverage(1);
     	leftEncoder = new Encoder(2, 3, true, EncodingType.k4X);
     	leftEncoder.setDistancePerPulse(4 * Math.PI/360);
     	leftEncoder.setSamplesToAverage(1);
     	
     	ahrs = new AHRS(SPI.Port.kMXP);
+    	
+    	pidSource = new DriveBasePIDSource();
+    	pidOutput = new DriveBasePIDOutput();
+    	drivePID = new PIDController(0.025, 0.0008, 0.0003, 0.0, pidSource, pidOutput);
+    	drivePID.setInputRange(-90, 90);
+    	drivePID.setOutputRange(-1, 1);
+    	drivePID.setAbsoluteTolerance(0.5);
+    	drivePID.setToleranceBuffer(8);
+    	drivePID.setContinuous(true);
+    	drivePID.disable();
+	}
+	
+	public static void enablePID() {
+		drivePID.setSetpoint(0);
+		drivePID.enable();
+	}
+	
+	public static void disablePID() {
+		drivePID.setSetpoint(0);
+		drivePID.disable();
 	}
 	
 	public static void driver(double left, double right){
@@ -86,7 +110,7 @@ public class DriveBase{
 	public static void resetAHRS()
 	{
 		ahrs.zeroYaw();
-		//ahrs.resetDisplacement();
+		ahrs.resetDisplacement();
 		//ahrs.reset();
 	}
 }

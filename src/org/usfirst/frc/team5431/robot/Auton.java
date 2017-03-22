@@ -5,6 +5,19 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 class Auton{
 	static int state = 10;
+	static double startTime = 0;
+	
+	static boolean waited(double seconds){
+		if(startTime == 0){
+			startTime = Timer.getFPGATimestamp();
+		}
+		double currentTime = Timer.getFPGATimestamp();
+		if (currentTime-startTime >= seconds) {
+			startTime = 0;
+			return true;
+		}
+		return false;
+}
 
 	static boolean travelled(double distance){
 		if (DriveBase.leftEncoder() >= distance || DriveBase.rightEncoder() >= distance){
@@ -37,15 +50,18 @@ class Auton{
 	}
 	
 	static void driveForward(double Power){		
-		double distanceDiff = DriveBase.getYaw() / 4;//DriveBase.leftEncoder() - DriveBase.rightEncoder();
+		/*double distanceDiff = DriveBase.getYaw() / 4;//DriveBase.leftEncoder() - DriveBase.rightEncoder();
+
+		double diffRatio = 0.15;
 		
-		double diffRatio = 0.1;
+		double newPower = (distanceDiff * diffRatio) / 3;*/
+		double currentYaw = DriveBase.getYaw();
 		
-		double newPower = (distanceDiff * diffRatio) / 3;
+		double newPower = 0.0066 * Math.pow(DriveBase.getYaw(), 3) + (0.011*DriveBase.getYaw());
 		
-		double wantedPower = -0.3;
+		double wantedPower = -0.4;
 		
-		
+	
 		if(newPower > 0) {
 			DriveBase.driver(wantedPower, wantedPower - newPower);
 		} else {
@@ -74,6 +90,7 @@ class Auton{
 	static void run(int selection)
 	{
 		switch(selection)
+		
 		{
 		case 0:
 			stayStill();
@@ -133,8 +150,9 @@ class Auton{
 			break;
 		case 30:
 			stayStill();
-			Timer.delay(2);//Delays everything - NOT GOOD PRACTICE
-			state = 40;
+			if (waited(2)){
+				state = 40;
+			}
 			break;
 		case 40:
 			turnRight(0.3);
@@ -145,9 +163,10 @@ class Auton{
 			break;
 		case 50:
 			stayStill();
-			Timer.delay(2);//BAD PRACTICE
-			DriveBase.resetEncoders();
-			state = 60;
+			if (waited(2)){
+				DriveBase.resetEncoders();
+				state = 60;
+			}
 			break;
 			
 		case 60:
