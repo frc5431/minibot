@@ -7,6 +7,7 @@ public class constants {
     public static final int bRightId = 3;
     public static final int Intake = 7;
     public static final int Flipper = 1;
-    public static final int Climber = 254;  //real id is 6
+    public static final int ClimberMaster = 8;  //real id is 6
+    public static final int ClimberSlave = 6;
     
 }

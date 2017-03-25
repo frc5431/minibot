@@ -16,16 +16,34 @@ public class Intake {
 	static CANTalon intakeMotor;
     static CANTalon flipper;
     static CANTalon climber;
+    static CANTalon climberSlave;
     static DigitalInput limit;
-    static Potentiometer pot;
+//    static Potentiometer pot;
+    static AnalogPotentiometer pot;
+    static AnalogTrigger analogTrigger;
+    static Counter halCount;
+    static double speedPrevious;
+    static int position;
+    static int flipperUp;
+    static DigitalInput flipperLimit;
     
     public static void intakeInit(){
+    	flipperLimit = new DigitalInput(5);
     	limit = new DigitalInput(4);
-    	pot = new AnalogPotentiometer(0,360,30);
+    	pot = new AnalogPotentiometer(0,270,0);
     	intakeMotor = new CANTalon(constants.Intake);
     	flipper = new CANTalon(constants.Flipper);
-    	climber = new CANTalon(constants.Climber);
-    	climber.setInverted(true);
+    	climber = new CANTalon(constants.ClimberMaster);
+    	climber.setInverted(true); 
+    	climberSlave = new CANTalon(constants.ClimberSlave);
+    	climberSlave.changeControlMode(CANTalon.TalonControlMode.Follower);
+    	climberSlave.set(climber.getDeviceID());
+    	analogTrigger = new AnalogTrigger(1);
+    	
+    	analogTrigger.setLimitsVoltage(3.5, 3.8);
+    	halCount = new Counter(analogTrigger);
+    	speedPrevious = 0.0f;
+    	position = 0;
     }
     
     public static void climbSlow() {
@@ -41,12 +59,114 @@ public class Intake {
     	
     }
     
+    public static int getPosition()
+    {
+    	if(speedPrevious >= 0)
+    		return position + halCount.get();
+    	return position - halCount.get();
+    }
+    
+    public static double checkDirectionChange(double newSpeed)
+    {
+    	if((speedPrevious < 0 && newSpeed >= 0) || (speedPrevious >= 0 && newSpeed < 0))
+    	{
+    		position = getPosition();
+    		halCount.reset();
+    		speedPrevious = newSpeed;
+    	}
+    	return newSpeed;
+    }
+    
+    public static void updateFlipperPosition()
+    {
+    	SmartDashboard.putBoolean("flipper", flipperLimit.get());
+    	SmartDashboard.putNumber("flipperPos", flipperUp);
+//    	if(!flipperLimit.get() && flipperUp == 2)
+//    	{
+//    		position = 0;
+//    		halCount.reset();
+//    		flipper.set(checkDirectionChange(0));
+//    	}
+//    	else
+//    	{
+//	    	int mPos = getPosition();
+//	    	boolean turnOff = false;
+//	    	if(flipperUp == 1)//If flipper should be up 50
+//	    	{
+//	    		if(mPos >= -40)
+//	    			flipper.set(checkDirectionChange(1));
+//	    		else if(mPos <= -65)
+//	    			flipper.set(checkDirectionChange(-1));
+//	    		else turnOff = true;
+//	    	}
+//	    	else if(flipperUp == 0)//-40
+//	    	{
+//	    		if(mPos >= -65)
+//	    			flipper.set(checkDirectionChange(-1));
+//	    		else turnOff = true;
+//	    	}
+//	    	else if(flipperUp == 2)
+//	    	{
+//	    		if(mPos >= -85)
+//	    			flipper.set(checkDirectionChange(1));
+//	    		else turnOff = true;
+//	    	}
+//	    	else
+//	    		flipper.set(checkDirectionChange(0));
+//	    	
+//	    	if(turnOff) flipper.set(checkDirectionChange(0));
+//    	}
+    	int mPos = getPosition();
+    	if(flipperUp == 2)
+    	{
+    		if(flipperLimit.get()) //Limit switch is inverted
+    			flipper.set(checkDirectionChange(1));
+    		else
+    		{
+    			flipper.set(0);
+    			halCount.reset();
+    			position = 0;
+    		}
+    	}
+    	else if(flipperUp == 1)
+    	{
+    		if(mPos >= -39)
+    			flipper.set(checkDirectionChange(-1));
+    		else if(mPos <= -47)
+    			flipper.set(checkDirectionChange(1));
+    		else {
+    			if(mPos >= -42) {
+    				flipper.set(checkDirectionChange(-0.1));
+    			} else if(mPos <= -45) {
+    				flipper.set(checkDirectionChange(0.1));
+    			} else {
+    				flipper.set(0);
+    			}
+    		}
+    	}
+    	else if(flipperUp == 0)
+    	{
+    		if(mPos >= -71)
+    			flipper.set(checkDirectionChange(-1));
+    		else
+    			flipper.set(0);
+    	}
+    	
+    }
+    
     public static void flipperDown(){
-    	flipper.set(-1);
+    	//if(flipperUp != 0)
+    		flipperUp = 0;
     }
     
     public static void flipperUp(){
-    	flipper.set(1);
+    	//if(flipperUp != 1)
+    		flipperUp = 1;
+    }
+    
+    public static void flipperBack(){
+    	//if(flipperUp != 2)
+    		flipperUp = 2;
     }
     
     public static void flipperOff(){
@@ -64,6 +184,10 @@ public class Intake {
     
     public static void intakeOff(){
     	intakeMotor.set(0);
+    	//climber.set(0);
+    }
+    
+    public static void climbOff() {
     	climber.set(0);
     }
     
@@ -103,7 +227,7 @@ public class Intake {
     }
     
     public static boolean isIntakeOn(){
-    	if (intakeMotor.get() < -0.1){ //inverted motor
+    	if (intakeMotor.get() > 0.1){ //inverted motor
     		return true;
     	}
     	else{

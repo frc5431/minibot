@@ -40,6 +40,7 @@ public class Robot extends IterativeRobot {
 	int prev = 0;
 	NetworkTable table;
 	//SendableChooser<Integer> autoChooser;
+	boolean isPullingBack = false;
 	int autoSelected = 1;
 	
 /*	TitanTalon frontLeft, frontRight, rearLeft, rearRight;
@@ -197,6 +198,13 @@ public class Robot extends IterativeRobot {
     	//drive.resetGlobalAngle();
     	DriveBase.resetAHRS();
     	DriveBase.disablePID();
+    	for(int a = 0; a < 5000; a++) {
+    		if(!Intake.flipperLimit.get()) break;
+    		Intake.flipper.set(1);
+    		Timer.delay(0.05);
+    	}
+    	Intake.position = 0;
+    	Intake.halCount.reset();
     	//DriveBase.driveBaseInit();
     	//drivePid.driveController.disable();
     }
@@ -210,18 +218,29 @@ public class Robot extends IterativeRobot {
     	SmartDashboard.putBoolean("IsIntaking", Intake.isIntakeOn());
     	
       	//Intake.intakeOn();
+    	
+    	/*if(isPullingBack) {
+    		if(!Intake.flipperLimit.get()) isPullingBack = false;
+    		Intake.flipperBack();
+    	}*/
+    	
     	//Intake.setFlipperPosition(1);
+    	Intake.updateFlipperPosition();
+    	SmartDashboard.putNumber("halEncoder", Intake.getPosition());
     	DriveBase.driver(xBoxDrive.getRawAxis(1), xBoxDrive.getRawAxis(5));
-    	if(xBoxOperate.getRawButton(6)){
+    	if(xBoxOperate.getRawButton(3)){
     		Intake.flipperUp();
     	}
     	else if(xBoxOperate.getRawButton(5)){
     		Intake.flipperDown();
-    	}else{
-    		Intake.flipperOff();
-    		
     	}
-    	    	
+    	else if(xBoxOperate.getRawButton(6)){
+    		Intake.flipperBack();
+    	}
+    	else{
+    		//Intake.flipperOff();
+    	}
+    	
     	if(prev > (xBoxOperate.getRawAxis(2) > 0.5 ? 0:1)){
     		Intake.toggleIntake();
     	}
@@ -230,23 +249,31 @@ public class Robot extends IterativeRobot {
     	}
     	else if((Intake.isIntakeOn() && Intake.isLimit() && !xBoxOperate.getRawButton(4)) || xBoxOperate.getRawButton(2)){ //when limit IS pushed
     		Intake.intakeOff();
-        	Intake.flipper.set(0.5);
-    	}
+    		//isPullingBack = true;
+        	Intake.flipperBack();
+    		//Intake.flipper.set(0.5);
+    	}else if(xBoxOperate.getRawAxis(3) > 0.5){
+			Intake.intakeRev();    	
+		}else{
+			if(!Intake.isIntakeOn()){
+				Intake.intakeOff();
+			}
+		}
+    	/*else if(prev < (xBoxOperate.getRawAxis(3) > 0.5 ? 0:1)) {
+    		Intake.intakeOff();
+    	}*/
     	
-    	else if(!Intake.isIntakeOn()){
-    		if(xBoxOperate.getRawAxis(3) > 0.5){
-    			Intake.intakeRev();    	
-    		}
-    		else if(xBoxOperate.getRawButton(3)) {
-    			Intake.climbSlow();
-    		}
-    		else if(xBoxOperate.getRawButton(1)){
-    			Intake.climb();
-    		}
-    		else{
-    			Intake.intakeOff();
-    		}
-    	}
+    	if(xBoxOperate.getRawButton(7)) {
+			Intake.climbSlow();
+		}
+		else if(xBoxOperate.getRawButton(1)){
+			Intake.climb();
+		} else{
+			//Intake.intakeOff();
+			Intake.climbOff();
+		}
+    	
+		
     	
     	prev = xBoxOperate.getRawAxis(2) > 0.5 ? 0:1;
     	
@@ -255,12 +282,12 @@ public class Robot extends IterativeRobot {
     	
 		SmartDashboard.putNumber("yaw teleop", DriveBase.getYaw());
 		
-		if (!Intake.isLimit()){
+		/*if (!Intake.isLimit()){
 			
 		}
 		else{
 			SmartDashboard.putBoolean("gearIn", false);
-		}
+		}*/
     	
     }
     	
