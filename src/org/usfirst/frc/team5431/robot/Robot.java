@@ -187,13 +187,15 @@ public class Robot extends IterativeRobot {
     	//Auton.redRight();
     	//run((int)table.getNumber("autonSelect", 0.0)); //1 is drive forward
     	//Auton.redMiddle();
+    	
+    	Intake.flipperUp();
     
     } 
 
     /**
      * This function is called periodically during operator control
      */
-    public void teleopInit(){
+    public void teleopInit(){ 
     	DriveBase.resetEncoders();
     	//drive.resetGlobalAngle();
     	DriveBase.resetAHRS();
