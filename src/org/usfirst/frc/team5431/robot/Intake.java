@@ -146,7 +146,7 @@ public class Intake {
     	}
     	else if(flipperUp == 0)
     	{
-    		if(mPos >= -71)
+    		if(mPos >= -73)
     			flipper.set(checkDirectionChange(-1));
     		else
     			flipper.set(0);
