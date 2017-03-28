@@ -246,10 +246,10 @@ class Auton{
 			}
 			break;
 		case 71:
-			driveForward(0.3);
+//			driveForward(0.3);
 			Intake.intakeRev();
-			if(travelled(5)){
-				state = 80;
+			if(travelled(0)){
+				state = 72;
 				DriveBase.resetEncoders();
 			}
 			break;
@@ -257,7 +257,7 @@ class Auton{
 			stayStill();
 			Intake.intakeRev();
 			Intake.flipperOff();
-			Timer.delay(0.3);
+			Timer.delay(0.5);
 			Intake.intakeRev();
 			state = 90;
 		case 90:
@@ -269,7 +269,7 @@ class Auton{
 			}
 		case 72:
 			Intake.intakeRev();
-			Intake.flipperDown();
+//			Intake.flipperDown();
 			for(int i = 0; i < 500; i++) { 
 				if(i > 300) DriveBase.driver(0.3, 0.3);
 				Timer.delay(1/100);
