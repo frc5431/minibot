@@ -183,9 +183,9 @@ public class Robot extends IterativeRobot {
     	/*SmartDashboard.putNumber("auton??", 1);
     	Auton.run(autoSelected);*/
     	//Auton.DriveForward();
-    	Auton.redMiddle();
+//    	Auton.redMiddle();
     	//Auton.blueLeft();
-    	//Auton.redRight();
+    	Auton.redRight();
     	//run((int)table.getNumber("autonSelect", 0.0)); //1 is drive forward
     	//Auton.redMiddle();
     	
