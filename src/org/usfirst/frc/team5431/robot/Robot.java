@@ -169,9 +169,10 @@ public class Robot extends IterativeRobot {
     	//autoLeftDriveController.reset();
     	//autoLeftDriveController.setSetpoint(0.5);
     	
-    	DriveBase.driver(-0.3, -0.3);
-    	DriveBase.pidOutput.wantedPower = -0.3;
-    	DriveBase.enablePID();
+    	//DriveBase.driver(-0.3, -0.3);
+    	//DriveBase.pidOutput.wantedPower = -0.3;
+    	//DriveBase.enablePID();
+    	//DriveBase.drivePIDTurn(45);
     }
 
     /**
@@ -182,13 +183,15 @@ public class Robot extends IterativeRobot {
     	/*SmartDashboard.putNumber("auton??", 1);
     	Auton.run(autoSelected);*/
     	//Auton.DriveForward();
-    	//Auton.redMiddle();
+    	Auton.redMiddle();
     	//Auton.blueLeft();
     	//Auton.redRight();
     	//run((int)table.getNumber("autonSelect", 0.0)); //1 is drive forward
     	//Auton.redMiddle();
     	
-    	Intake.flipperUp();
+    	SmartDashboard.putNumber("AUTOANGLE", DriveBase.getYaw());
+    	
+    	//Intake.flipperUp();
     
     } 
 
@@ -201,7 +204,7 @@ public class Robot extends IterativeRobot {
     	DriveBase.resetAHRS();
     	DriveBase.disablePID();
     	for(int a = 0; a < 5000; a++) {
-    		if(!Intake.flipperLimit.get()) break;
+    		if(Intake.getFlipperUpLimit()) break;
     		Intake.flipper.set(1);
     		Timer.delay(0.05);
     	}

@@ -25,14 +25,15 @@ public class Intake {
     static double speedPrevious;
     static int position;
     static int flipperUp;
-    static DigitalInput flipperLimit;
+    //static DigitalInput flipperLimit;
     
     public static void intakeInit(){
-    	flipperLimit = new DigitalInput(5);
+    	//flipperLimit = new DigitalInput(5);
     	limit = new DigitalInput(4);
     	pot = new AnalogPotentiometer(0,270,0);
     	intakeMotor = new CANTalon(constants.Intake);
     	flipper = new CANTalon(constants.Flipper);
+    	flipper.enableLimitSwitch(true, true);
     	climber = new CANTalon(constants.ClimberMaster);
     	climber.setInverted(true); 
     	climberSlave = new CANTalon(constants.ClimberSlave);
@@ -77,9 +78,18 @@ public class Intake {
     	return newSpeed;
     }
     
+    public static boolean getFlipperUpLimit() {
+    	return flipper.isFwdLimitSwitchClosed();
+    }
+    
+    public static boolean getFlipperDownLimit() {
+    	return flipper.isRevLimitSwitchClosed();
+    }
+    
     public static void updateFlipperPosition()
     {
-    	SmartDashboard.putBoolean("flipper", flipperLimit.get());
+    	boolean flipperUpLimit = (boolean) getFlipperUpLimit();
+    	SmartDashboard.putBoolean("flipper", flipperUpLimit);
     	SmartDashboard.putNumber("flipperPos", flipperUp);
 //    	if(!flipperLimit.get() && flipperUp == 2)
 //    	{
@@ -119,7 +129,7 @@ public class Intake {
     	int mPos = getPosition();
     	if(flipperUp == 2)
     	{
-    		if(flipperLimit.get()) //Limit switch is inverted
+    		if(!flipperUpLimit)
     			flipper.set(checkDirectionChange(1));
     		else
     		{
@@ -146,8 +156,10 @@ public class Intake {
     	}
     	else if(flipperUp == 0)
     	{
-    		if(mPos >= -73)
+    		if(mPos >= -68 || getFlipperDownLimit()) {
+    			mPos = -70;
     			flipper.set(checkDirectionChange(-1));
+    		}
     		else
     			flipper.set(0);
     	}

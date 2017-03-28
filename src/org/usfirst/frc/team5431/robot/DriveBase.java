@@ -21,6 +21,15 @@ public class DriveBase{
     static PIDController drivePID;
     static DriveBasePIDSource pidSource;
     static DriveBasePIDOutput pidOutput;
+    static boolean isPID = false;
+    
+    public static double
+    	driveP = 0.025,
+    	driveI = 0.0008,
+    	driveD = 0.0003,
+    	turnP = 0.14,
+    	turnI = 0.0021,
+    	turnD = 0.00051;
     
 	public static void driveBaseInit(){
 		masterRight = new CANTalon(constants.masterRightId);
@@ -42,7 +51,8 @@ public class DriveBase{
     	rightEncoder = new Encoder(0, 1, false, EncodingType.k4X);
     	rightEncoder.setDistancePerPulse(4  * Math.PI/360);
     	rightEncoder.setSamplesToAverage(1);
-    	leftEncoder = new Encoder(2, 3, true, EncodingType.k4X);
+    	rightEncoder.setReverseDirection(true);
+    	leftEncoder = new Encoder(2, 3, false, EncodingType.k4X);
     	leftEncoder.setDistancePerPulse(4 * Math.PI/360);
     	leftEncoder.setSamplesToAverage(1);
     	
@@ -50,23 +60,67 @@ public class DriveBase{
     	
     	pidSource = new DriveBasePIDSource();
     	pidOutput = new DriveBasePIDOutput();
-    	drivePID = new PIDController(0.025, 0.0008, 0.0003, 0.0, pidSource, pidOutput);
+    	drivePID = new PIDController(driveP, driveI, driveD, 0.0, pidSource, pidOutput);
     	drivePID.setInputRange(-90, 90);
     	drivePID.setOutputRange(-1, 1);
     	drivePID.setAbsoluteTolerance(0.5);
     	drivePID.setToleranceBuffer(8);
     	drivePID.setContinuous(true);
     	drivePID.disable();
+    	
+    	isPID = false;
 	}
 	
+	
 	public static void enablePID() {
-		drivePID.setSetpoint(0);
 		drivePID.enable();
+		isPID = true;
+	}
+	
+	public static void drivePIDForward(double power) {
+		driver(-power, -power);
+		drivePID.reset();
+		drivePID.setSetpoint(0);
+		drivePID.setPID(driveP, driveI, driveD, 0.0);
+		setDrivePIDSpeed(power);
+		DriveBasePIDOutput.wantedPID = DriveBasePIDOutput.PIDType.DriveForward;
+    	drivePID.setInputRange(-90, 90);
+    	drivePID.setOutputRange(-1, 1);
+    	drivePID.setAbsoluteTolerance(0.5);
+    	drivePID.setToleranceBuffer(8);
+    	drivePID.setContinuous(true);
+		drivePID.setSetpoint(0);
+		enablePID();
+	}
+	
+	public static void drivePIDTurn(double angle) {
+		drivePID.reset();
+		drivePID.setSetpoint(0);
+		drivePID.setPID(turnP, turnI, turnD, 0.0);
+		setDrivePIDSpeed(0.3);
+		DriveBasePIDOutput.wantedAngle = angle;
+		DriveBasePIDOutput.wantedPID = DriveBasePIDOutput.PIDType.Turn;
+    	drivePID.setInputRange(-90, 90);
+    	drivePID.setOutputRange(-0.239, 0.239);
+    	drivePID.setAbsoluteTolerance(0.5);
+    	drivePID.setToleranceBuffer(4);
+    	drivePID.setContinuous(true);
+		drivePID.setSetpoint(angle);
+		enablePID();
+	}
+	
+	public static void setDrivePIDSpeed(double power) {
+		if(power == 0.0) DriveBasePIDOutput.drivePID = false; else DriveBasePIDOutput.drivePID = true;
+		DriveBasePIDOutput.wantedPower = -power;
 	}
 	
 	public static void disablePID() {
-		drivePID.setSetpoint(0);
 		drivePID.disable();
+		isPID = false;
+	}
+	
+	public static boolean isPID() {
+		return isPID;
 	}
 	
 	public static void driver(double left, double right){
