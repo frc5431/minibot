@@ -140,14 +140,14 @@ public class Intake {
     	}
     	else if(flipperUp == 1)
     	{
-    		if(mPos >= -39)
+    		if(mPos >= -33)
     			flipper.set(checkDirectionChange(-1));
-    		else if(mPos <= -47)
+    		else if(mPos <= -42)
     			flipper.set(checkDirectionChange(1));
     		else {
-    			if(mPos >= -42) {
+    			if(mPos >= -35) {
     				flipper.set(checkDirectionChange(-0.1));
-    			} else if(mPos <= -45) {
+    			} else if(mPos <= -39) {
     				flipper.set(checkDirectionChange(0.1));
     			} else {
     				flipper.set(0);
@@ -156,12 +156,14 @@ public class Intake {
     	}
     	else if(flipperUp == 0)
     	{
-    		if(mPos >= -68 || getFlipperDownLimit()) {
-    			mPos = -70;
+    		if(!getFlipperDownLimit()) { //mPos >= 68 || 
+    			//mPos = -70;
     			flipper.set(checkDirectionChange(-1));
     		}
-    		else
+    		else {
+    			mPos = -70;
     			flipper.set(0);
+    		}
     	}
     	
     }
@@ -205,8 +207,9 @@ public class Intake {
     
     
     public static void upAndOff(){
-    	flipper.set(0.5);
-    	intakeMotor.set(0.5);
+    	flipper.set(-0.5);
+    	Timer.delay(1.3);
+    	//intakeMotor.set(0.5);
     }
     
     public static void placeGear(){
