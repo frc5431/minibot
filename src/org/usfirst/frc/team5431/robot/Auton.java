@@ -8,6 +8,7 @@ class Auton{
 	static double startTime = 0;
 	static int previousState = -1;
 	static int driveState = 0;
+	static double futureTurn = 0;
 	
 	static boolean waited(int state, double seconds){
 		if(startTime == 0){
@@ -30,7 +31,15 @@ class Auton{
 }
 
 	static boolean travelled(double distance){
-		if (DriveBase.leftEncoder() >= distance || DriveBase.rightEncoder() >= distance){
+		if(distance < 0) {
+			if(DriveBase.leftEncoder() <= distance || DriveBase.rightEncoder() <= distance) {
+				DriveBase.resetEncoders();
+				return true;
+			}
+			return false;
+		}
+		
+		if (DriveBase.leftEncoder() >= distance || DriveBase.rightEncoder() >= distance) {
 			SmartDashboard.putNumber("reached encoder distance", 1);
 			DriveBase.resetEncoders();
 			return true;
@@ -100,8 +109,11 @@ class Auton{
 		//DriveBase.driver(-power, -power - 0.115);
 	}
 	
-	static void driveBackward(double power){
-		DriveBase.driver(power, power);
+	static void driveBackward(double Power){
+		/*if(!DriveBase.isPID()) {
+			DriveBase.drivePIDForward(-Power);
+		}*/
+		DriveBase.driver(Power, Power);
 	}
 	
 	static void turnRight(double power){
@@ -313,7 +325,7 @@ class Auton{
 			driveForward(0.25);
 			Intake.intakeOff();
 			Intake.flipperOff();
-			if(travelled(67)) {
+			if(travelled(63)) {
 				waited(10, 0.1);
 				state = 30;
 			}
@@ -326,7 +338,7 @@ class Auton{
 			break;
 		case 40:
 			turnRight(0.15);
-			if(turned(58)) {
+			if(turned(52)) {
 				DriveBase.resetAHRS();
 				state = 50;
 			}
@@ -342,7 +354,7 @@ class Auton{
 		case 60:
 			driveForward(0.25);
 			Intake.flipperUp();
-			if(travelled(39.5)) {
+			if(travelled(43)) {
 				state = 70;
 			}
 			break;
@@ -740,6 +752,172 @@ class Auton{
 	SmartDashboard.putNumber("yaw auton", DriveBase.getYaw());
 	SmartDashboard.putNumber("current state", state);
 	}
+	
+	static void redLeftLong(){
+		switch(state){
+		case 10:
+			driveForward(0.25);
+			Intake.intakeOff();
+			Intake.flipperOff();
+			if(travelled(68.5)) {
+				state = 30;
+			}
+			break;
+		case 30:
+			stayStill();
+//			Timer.delay(2);//Delays everything - NOT GOOD PRACTICE
+			state = 40;
+			break;
+		case 40:
+			turnRight(0.145);
+			if(turned(49.2))//-46
+			{
+				DriveBase.resetAHRS();
+				state = 50;
+			}
+			break;
+		case 41:
+			stayStill();
+			waited(41, 0.1);
+//			Timer.delay(2);//Delays everything - NOT GOOD PRACTICE
+			state = 41;
+			break;
+		case 50:
+			stayStill();
+			if(waited(50, 1)) {
+				DriveBase.resetEncoders();
+				DriveBase.resetAHRS();
+				state = 60;
+			}
+			break;
+			
+		case 60:
+			driveForward(0.25);
+			Intake.flipperUp();
+			
+			if(travelled(52)) {
+				state = 70;
+			}
+			break;
+		case 70:
+			//stayStill();
+			
+//			Intake.placeGear();
+//			Timer.delay(1.5);
+			driveForward(0.25);
+			boolean went = false;
+			if(travelled(5.5)) { 
+				went = true; 
+				DriveBase.disablePID();
+				DriveBase.driver(0, 0);
+				stayStill(); 
+			}
+			
+			if(went || waited(70, 2.5)) {
+				DriveBase.resetEncoders();
+				DriveBase.resetAHRS();
+				state = 72;
+			}
+			break;
+		case 72:
+			stayStill();
+			Intake.intakeRev();
+			Intake.flipperDown();
+			if(waited(72, 1)) {
+				state = 73;
+			}
+			break;
+		case 73:
+			driveBackward(0.3);
+			if(travelled(-37)) {
+				state = 75;
+			}
+			
+			/*for(int i = 0; i < 1000; i++) { 
+				if(i > 320) DriveBase.driver(0.21, 0.21);
+				if(i > 75) Intake.updateFlipperPosition();
+				Timer.delay(1/100);
+			}*/
+			//state = 100;
+			break;
+		case 75:
+			stayStill();
+			if(waited(75, 0.5)) {
+				state = 76;
+			}
+			break;
+		case 76:
+			turnLeft(0.16);
+			if(turned(-59)) {
+				state = 77;
+			}
+			break;
+		case 77:
+			stayStill();
+			if(waited(77, 0.5)) {
+				DriveBase.resetAHRS();
+				DriveBase.resetEncoders();
+				state = 78;
+			}
+			break;
+		case 78:
+			Intake.flipperBack();
+			driveForward(1);
+			if(travelled(265)) {
+				stayStill();
+				state = 79;
+			}
+			break;
+		case 79:
+			Intake.flipperBack();
+			if(DriveBase.getYaw() > 2 && futureTurn == 0) {
+				futureTurn = -Math.abs(DriveBase.getYaw() - 5);
+			}
+			turnLeft(0.21);
+			if(turned(futureTurn)) {
+				DriveBase.resetEncoders();
+				DriveBase.resetAHRS();
+				stayStill();
+				state = 80;
+			}
+			break;
+		case 80:
+			Intake.flipperBack();
+			driveForward(1);
+			if(travelled(58)) {
+				state = 81;
+			}
+			break;
+		/*case 80:
+			Intake.intakeRev();
+			Intake.flipperDown();
+			driveForward(0.15);
+			if(travelled(1.25)) {
+				state = 100;
+			}
+			break;*/
+		case 81:
+			Intake.flipperBack();
+			driveForward(0.3);
+			if(travelled(10)) {
+				state = 100;
+			}
+			break;
+		case 100:
+			stayStill();
+			//Intake.intakeOff();
+			Intake.flipperOff();
+			Intake.intakeOff();
+//			Intake.outGear();
+		default:
+			//Um . . .
+			break;
+			}
+		SmartDashboard.putNumber("rigt encoder value auton", DriveBase.rightEncoder());
+		SmartDashboard.putNumber("left encoder value auton", DriveBase.leftEncoder());
+		SmartDashboard.putNumber("yaw auton", DriveBase.getYaw());
+		SmartDashboard.putNumber("current state", state);
+		}
 	
 	/*static void blueLeft(){
 	switch(state){

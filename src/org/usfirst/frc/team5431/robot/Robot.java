@@ -180,7 +180,7 @@ public class Robot extends IterativeRobot {
     	//DriveBase.pidOutput.wantedPower = -0.3;
     	//DriveBase.enablePID();
     	//DriveBase.drivePIDTurn(45);
-    	//DriveBase.drivePIDForward(0.3);
+    	//DriveBase.drivePIDForward(0.5);
     }
 
     /**
@@ -194,7 +194,9 @@ public class Robot extends IterativeRobot {
     	//Auton.redMiddle();
     	//Auton.redRight();
     	//Auton.redLeft();
-    	Auton.blueLeft();
+    	//Auton.blueLeft();
+    	//Auton.redLeft();
+    	Auton.redLeftLong();
     	//Auton.blueRight();
     	//Auton.redRight();
     	//run((int)table.getNumber("autonSelect", 0.0)); //1 is drive forward
