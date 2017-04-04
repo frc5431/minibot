@@ -36,8 +36,10 @@ public class Intake {
     	flipper.enableLimitSwitch(true, true);
     	climber = new CANTalon(constants.ClimberMaster);
     	climber.setInverted(true); 
+    	climber.enableBrakeMode(false);
     	climberSlave = new CANTalon(constants.ClimberSlave);
     	climberSlave.changeControlMode(CANTalon.TalonControlMode.Follower);
+    	climberSlave.enableBrakeMode(false);
     	climberSlave.set(climber.getDeviceID());
     	analogTrigger = new AnalogTrigger(1);
     	
@@ -165,6 +167,8 @@ public class Intake {
     			flipper.set(0);
     		}
     	}
+    	
+    	SmartDashboard.putNumber("Flipper hal position", mPos);
     	
     }
     

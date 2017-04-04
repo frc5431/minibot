@@ -23,12 +23,12 @@ public class DriveBase{
     static DriveBasePIDOutput pidOutput;
     static boolean isPID = false;
     
-    public static final boolean isComp = true;
+    public static final boolean isComp = false;
     
     public static final double
-    	driveP = (isComp) ? 0.022 : 0.025,
+    	driveP = (isComp) ? 0.022 : 0.010,
     	driveI = (isComp) ? 0.0012 : 0.0008,
-    	driveD = (isComp) ? 0.00031 : 0.0003,
+    	driveD = (isComp) ? 0.00031 : 0.00035,
     	turnP = 0.14,
     	turnI = 0.0021,
     	turnD = 0.00051;

@@ -1,4 +1,4 @@
-package org.usfirst.frc.team5431.utils;
+/*/*package org.usfirst.frc.team5431.utils;
 
 import com.ctre.CANTalon;
 
@@ -162,7 +162,7 @@ public class TitanDrive {
 				this.resetCounter = 0;
 				holdLast = true;
 			}*/
-			
+			/*
 			if(withinBand(turn, this.turnBand)) { // && !withinBand(this.previousTurn, this.turnBand)) {
 				//We want it to drive straight (Set the new angle)
 				this.resetGlobalAngle();
@@ -202,5 +202,5 @@ public class TitanDrive {
 		}
 		this.previousTurn = turn;
 	}	
-}
+}*/
  	

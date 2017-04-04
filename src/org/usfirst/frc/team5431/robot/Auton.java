@@ -250,7 +250,7 @@ class Auton{
 			driveForward(0.3);
 			Intake.intakeOff();
 			Intake.flipperOff();
-			if(travelled(53))
+			if(travelled(72.5))	//53
 			{
 				state = 30;
 			}
@@ -263,7 +263,7 @@ class Auton{
 			break;
 		case 40:
 			turnLeft(0.2);
-			if(turned(-50))
+			if(turned(-60))
 			{
 				state = 50;
 			}
@@ -280,7 +280,7 @@ class Auton{
 			
 		case 60:
 			driveForward(0.27);
-			if(travelled(28))//32
+			if(travelled(16)) //32	//26
 			{
 				state = 70;
 			}
@@ -337,7 +337,7 @@ class Auton{
 			}
 			break;
 		case 40:
-			turnRight(0.15);
+			turnRight(0.25);
 			if(turned(52)) {
 				DriveBase.resetAHRS();
 				state = 50;
@@ -492,7 +492,7 @@ class Auton{
 			Intake.flipperBack();
 //			Intake.flipperUp();
 			waited(10, 0.1);
-			if(travelled(76))
+			if(travelled(76)) //76 inches
 			{
 				state = 70;
 			}
@@ -539,7 +539,7 @@ class Auton{
 			Intake.intakeRev();
 //			Intake.flipperDown();
 			for(int i = 0; i < 700; i++) { 
-				if(i > 300) DriveBase.driver(0.3, 0.3);
+				if(i > 400) DriveBase.driver(0.3, 0.3);
 				Timer.delay(1/100);
 			}
 			state = 80;
@@ -586,7 +586,7 @@ class Auton{
 		state = 40;
 		break;
 	case 40:
-		turnLeft(0.15);
+		turnLeft(0.25);
 		if(turned(-57.5))//-46
 		{
 			DriveBase.resetAHRS();
@@ -668,6 +668,7 @@ class Auton{
 		driveForward(0.25);
 		Intake.intakeOff();
 		Intake.flipperOff();
+		waited(10, 0.1);
 		if(travelled(68.5)) {
 			state = 30;
 		}
@@ -675,10 +676,13 @@ class Auton{
 	case 30:
 		stayStill();
 //		Timer.delay(2);//Delays everything - NOT GOOD PRACTICE
-		state = 40;
+		if(waited(30, 1)) {
+			state = 40;
+		}
+		//state = 40;
 		break;
 	case 40:
-		turnRight(0.145);
+		turnRight(0.2);
 		if(turned(49.2))//-46
 		{
 			DriveBase.resetAHRS();
@@ -769,7 +773,7 @@ class Auton{
 			state = 40;
 			break;
 		case 40:
-			turnRight(0.145);
+			turnRight(0.25);
 			if(turned(49.2))//-46
 			{
 				DriveBase.resetAHRS();
@@ -847,7 +851,7 @@ class Auton{
 			}
 			break;
 		case 76:
-			turnLeft(0.16);
+			turnLeft(0.25);
 			if(turned(-59)) {
 				state = 77;
 			}

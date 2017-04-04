@@ -16,9 +16,9 @@ import edu.wpi.cscore.CvSink;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.CameraServer;
 import org.usfirst.frc.team5431.robot.*;
-import org.usfirst.frc.team5431.utils.TitanDrive;
-import org.usfirst.frc.team5431.utils.TitanNavx;
-import org.usfirst.frc.team5431.utils.TitanTalon;
+//import org.usfirst.frc.team5431.utils.TitanDrive;
+//import org.usfirst.frc.team5431.utils.TitanNavx;
+//import org.usfirst.frc.team5431.utils.TitanTalon;
 
 
 /**
@@ -150,7 +150,7 @@ public class Robot extends IterativeRobot {
     }
     
     public void robotPeriodic(){
-     	LED.setTimeElapsed(150 - Timer.getMatchTime());
+     	//LED.setTimeElapsed(150 - Timer.getMatchTime());
 
     	LED.setGear(Intake.isLimit());
     }
@@ -193,10 +193,10 @@ public class Robot extends IterativeRobot {
     	//Auton.DriveForward();
     	//Auton.redMiddle();
     	//Auton.redRight();
-    	//Auton.redLeft();
+    	Auton.redMiddle();
     	//Auton.blueLeft();
-    	//Auton.redLeft();
-    	Auton.redLeftLong();
+    	//Auton.redRight();
+    	//Auton.redMiddle();
     	//Auton.blueRight();
     	//Auton.redRight();
     	//run((int)table.getNumber("autonSelect", 0.0)); //1 is drive forward
