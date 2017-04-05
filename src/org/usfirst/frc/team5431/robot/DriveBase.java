@@ -80,6 +80,10 @@ public class DriveBase{
 	}
 	
 	public static void drivePIDForward(double power) {
+		drivePIDForward(power, 0);
+	}
+	
+	public static void drivePIDForward(double power, double setpoint) {
 		driver(-power, -power);
 		drivePID.reset();
 		drivePID.setSetpoint(0);
@@ -91,7 +95,7 @@ public class DriveBase{
     	drivePID.setAbsoluteTolerance(0.5);
     	drivePID.setToleranceBuffer(8);
     	drivePID.setContinuous(true);
-		drivePID.setSetpoint(0);
+		drivePID.setSetpoint(setpoint);
 		enablePID();
 	}
 	
