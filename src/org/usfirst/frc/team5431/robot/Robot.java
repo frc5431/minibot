@@ -16,6 +16,15 @@ import edu.wpi.cscore.CvSink;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.CameraServer;
 import org.usfirst.frc.team5431.robot.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.opencv.core.Mat;
+import org.opencv.core.MatOfPoint;
+import org.opencv.core.Rect;
+import org.opencv.imgproc.Imgproc;
+import org.usfirst.frc.team5431.perception.GripPipeline;
 //import org.usfirst.frc.team5431.utils.TitanDrive;
 //import org.usfirst.frc.team5431.utils.TitanNavx;
 //import org.usfirst.frc.team5431.utils.TitanTalon;
@@ -42,6 +51,11 @@ public class Robot extends IterativeRobot {
 	//SendableChooser<Integer> autoChooser;
 	boolean isPullingBack = false;
 	int autoSelected = 1;
+	GripPipeline grip;
+	UsbCamera camera;
+	CvSink cv;
+	Mat image = new Mat();
+	public static double visionAngle = 0, visionDistance = 0;
 	
 /*	TitanTalon frontLeft, frontRight, rearLeft, rearRight;
 	TitanDrive drive;
@@ -66,12 +80,12 @@ public class Robot extends IterativeRobot {
     	SmartDashboard.putNumber("AutonomousSelection", 3);
     	table = NetworkTable.getTable("copernicus");
     	
-    	new Thread(() -> {
-            UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
-            camera.setResolution(360,240);
-            camera.setFPS(30); 
-        }).start();
-    	
+    	camera = CameraServer.getInstance().startAutomaticCapture();
+    	camera.setBrightness(0);
+    	camera.setExposureManual(0);
+    	//camera.setWhiteBalanceManual(1000);
+    	cv = CameraServer.getInstance().getVideo();
+    	grip = new GripPipeline();
     	LED.init();
     
     	//navx = new TitanNavx();
@@ -148,16 +162,109 @@ public class Robot extends IterativeRobot {
     	Intake.intakeInit();
 
     }
+ 
+    public Rect getRectangle(MatOfPoint contour) {
+    	return Imgproc.boundingRect(contour);
+    }
+    
+    public double getCenterX(Rect boundingBox) {
+    	return boundingBox.x + (boundingBox.width / 2);
+    }
+    
+    public double getCenterY(Rect boundingBox) {
+    	return boundingBox.y + (boundingBox.height / 2);
+    }
+    
+    public boolean inSameSpot(Rect parent, Rect child) {
+    	return (getCenterX(parent) == getCenterX(child)) && (getCenterY(parent) == getCenterY(child));
+    }
+    
+    public void processFrame() {
+    	cv.grabFrame(image);
+    	if(image != null)
+    	{
+    		if(!image.empty()) {
+    			grip.process(image);
+    			List<MatOfPoint> contourPoints = grip.filterContoursOutput();
+    			
+    			Rect leftPeg = new Rect(), rightPeg = new Rect();
+    			double centerX = 666, centerY = 666;
+    			
+    			if(contourPoints.size() < 2) {
+    				SmartDashboard.putBoolean("ContoursFound", false);
+    				return;
+    			}
+    			
+    			SmartDashboard.putBoolean("ContoursFound", true);
+    			
+    			for(MatOfPoint parent : contourPoints) {
+    				Rect parentBox = getRectangle(parent);
+    				double parentX = getCenterX(parentBox);
+    				double parentY = getCenterY(parentBox);
+    				
+    				for(MatOfPoint child : contourPoints) {
+    					Rect childBox = getRectangle(child);
+    					if(inSameSpot(parentBox, childBox)) continue;
+    					double childX = getCenterX(childBox);
+    					double childY = getCenterY(childBox);
+    					
+    					if(Math.abs(parentY - childY) < 10) {
+    						SmartDashboard.putBoolean("PegFound", true);
+    						centerX = (parentX + childX) / 2;
+    						centerY = (parentY + childY) / 2;
+    						if(parentX < childX) {
+    							leftPeg = parentBox;
+    							rightPeg = childBox;
+    						} else {
+    							leftPeg = childBox;
+    							rightPeg = parentBox;
+    						}
+    						break;
+    					} else {
+    						SmartDashboard.putBoolean("PegFound", false);
+    					}
+    				}
+    			}
+    			
+    			double imageWidth = image.cols();
+    			double fromCenter = centerX - (imageWidth / 2);
+    			double degreesPerPixel = (50.466 / imageWidth);
+    			visionAngle = fromCenter * degreesPerPixel;
+    			visionDistance = Math.abs(getCenterX(leftPeg) - getCenterX(rightPeg));
+    			
+    	    	Rect r = Imgproc.boundingRect(contourPoints.get(0));
+    	    	SmartDashboard.putNumber("Contour1Center", r.x + (r.width / 2));	
+    	    	SmartDashboard.putNumber("PegPairCenterX", fromCenter);
+    	    	SmartDashboard.putNumber("PegHorzAngle", visionAngle);
+    	    	SmartDashboard.putNumber("PegDisplacement", visionDistance);
+    		}
+    	}
+    }
     
     public void robotPeriodic(){
      	//LED.setTimeElapsed(150 - Timer.getMatchTime());
-
+    	
+    	processFrame();
     	LED.setGear(Intake.isLimit());
+    }
+    
+    public static void useAngleFromCamera() {
+    	DriveBasePIDSource.inputType = DriveBasePIDSource.InputType.Vision;
+    }
+    
+    public static void useAngleFromNavx() {
+    	DriveBasePIDSource.inputType = DriveBasePIDSource.InputType.Navx;
+    }
+    
+    public static boolean isOnTarget() {
+    	return visionDistance > 28; //Change number at competition
     }
     
     public void autonomousInit() {
     	Auton.state = 10;
     	autoSelected = (int) SmartDashboard.getNumber("AutonomousSelection", 3);//autoChooser.getSelected();
+    	
+    	useAngleFromNavx();
     	
     	DriveBase.resetEncoders();
     	DriveBase.resetAHRS();
@@ -192,8 +299,8 @@ public class Robot extends IterativeRobot {
     	Auton.run(autoSelected);*/
     	//Auton.DriveForward();
     	//Auton.redMiddle();
-    	//Auton.redRight();
-    	Auton.redMiddle();
+    	Auton.redRight();
+    	//Auton.redMiddle();
     	//Auton.blueLeft();
     	//Auton.redRight();
     	//Auton.redMiddle();
@@ -230,6 +337,7 @@ public class Robot extends IterativeRobot {
     }
     
     public void teleopPeriodic() {
+    	
     	//drive.titanDrive(-xBoxDrive.getRawAxis(1), xBoxDrive.getRawAxis(4));
     	//newDrive.arcadeDrive(xBoxDrive.getRawAxis(1), -xBoxDrive.getRawAxis(4), true);
     	//table.putBoolean("gearIn", Intake.isLimit());

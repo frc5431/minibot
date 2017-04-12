@@ -30,7 +30,7 @@ public class DriveBasePIDSource implements PIDSource {
 		if(inputType == InputType.Navx) {
 			return DriveBase.getYaw();
 		} else if(inputType == InputType.Vision){
-			return -(Vision.getTargetAngle());
+			return -(Robot.visionAngle);
 		} else {
 			return 0.0;
 		}

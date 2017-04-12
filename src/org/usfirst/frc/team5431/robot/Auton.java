@@ -575,19 +575,22 @@ class Auton{
 		driveForward(0.3);
 		Intake.intakeOff();
 		Intake.flipperOff();
-		if(travelled(73))
+		Robot.useAngleFromNavx();
+		if(travelled(68))
 		{
 			state = 30;
 		}
 		break;
 	case 30:
 		stayStill();
-//		Timer.delay(2);//Delays everything - NOT GOOD PRACTICE
-		state = 40;
+		//Timer.delay(2);//Delays everything - NOT GOOD PRACTICE
+		if(waited(30, 1)) {
+			state = 40;
+		}
 		break;
 	case 40:
-		turnLeft(0.25);
-		if(turned(-57.5))//-46
+		turnLeft(0.16);
+		if(turned(-46))//-46
 		{
 			DriveBase.resetAHRS();
 			state = 50;
@@ -607,51 +610,71 @@ class Auton{
 			state = 60;
 		}
 		break;
-		
 	case 60:
 		driveForward(0.3);
-		Intake.flipperUp();
-		
-		if(travelled(44)) {
-			state = 70;
+		//Intake.flipperUp();
+		if(travelled(20)) {
+			Robot.useAngleFromCamera();
+			state = 65;
 		}
+		break;
+	case 65:
+		driveForward(0.25);
+		//Intake.flipperUp();
+		
+		if(travelled(26)) { //44 total inches	//DONT RUN INTO THE THING
+			state = 66;
+		}
+		break;
+	case 66:
+		stayStill();
+		
+		state = 70;
 		break;
 	case 70:
 		stayStill();
-		
 //		Intake.placeGear();
 //		Intake.intakeRev();
 //		Timer.delay(1.5);
-		Intake.intakeRev();
-		driveForward(0.25);
+		//Intake.intakeRev();
+		driveForward(0.2);
 		if(travelled(1)) {
-			state = 72;	
+			state = 80;	
 		}
 		break;
 	case 72:
-		Intake.intakeRev();
 		Intake.flipperDown();
+		Timer.delay(1);
+		Intake.intakeRev();
 		for(int i = 0; i < 600; i++) { 
 			DriveBase.driver(0.15, 0.15);
 			if(i > 300) Intake.updateFlipperPosition();
 			Timer.delay(1/100);
 		}
+		
 		state = 100;
 		break;
 	case 80:
-		Intake.intakeRev();
-		Intake.flipperDown();
+		
+		Intake.flipperUp();
 		driveForward(0.15);
-		if(travelled(1.25)) {
+		if(travelled(10)) {
+
+			
 			state = 100;
 		}
 		break;
 	case 100:
 		stayStill();
 		//Intake.intakeOff();
+		
 		Intake.flipperOff();
-		Intake.intakeOff();
+		state = 101;
 //		Intake.outGear();
+	case 101:
+		if (waited(101,1)){
+			Intake.intakeRev();
+		}
 	default:
 		//Um . . .
 		break;
