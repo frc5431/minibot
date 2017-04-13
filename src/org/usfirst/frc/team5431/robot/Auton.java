@@ -572,6 +572,7 @@ class Auton{
 	static void redRight(){
 	switch(state){
 	case 10:
+		DriveBase.isVision = false;
 		driveForward(0.3);
 		Intake.intakeOff();
 		Intake.flipperOff();
@@ -589,7 +590,7 @@ class Auton{
 		}
 		break;
 	case 40:
-		turnLeft(0.16);
+		turnLeft(0.18);
 		if(turned(-46))//-46
 		{
 			DriveBase.resetAHRS();
@@ -611,25 +612,29 @@ class Auton{
 		}
 		break;
 	case 60:
-		driveForward(0.3);
+		driveForward(0.2);
 		//Intake.flipperUp();
-		if(travelled(20)) {
-			Robot.useAngleFromCamera();
-			state = 65;
+		if(travelled(20) || Robot.visionTargetFound) {
+			if(waited(60, 0.5)) {
+				stayStill(); //RESET THE PID OBJECT
+				DriveBase.isVision = true;
+				Robot.useAngleFromCamera();
+				state = 65;
+			}
 		}
 		break;
 	case 65:
-		driveForward(0.25);
+		driveForward(0.195);
 		//Intake.flipperUp();
 		
-		if(travelled(26)) { //44 total inches	//DONT RUN INTO THE THING
+		if(Robot.isOnTarget()) { //travelled(26)) { //44 total inches	//DONT RUN INTO THE THING
 			state = 66;
 		}
 		break;
 	case 66:
 		stayStill();
 		
-		state = 70;
+		state = 80;
 		break;
 	case 70:
 		stayStill();
@@ -637,12 +642,14 @@ class Auton{
 //		Intake.intakeRev();
 //		Timer.delay(1.5);
 		//Intake.intakeRev();
-		driveForward(0.2);
+		//driveForward(0.2);
 		if(travelled(1)) {
 			state = 80;	
 		}
 		break;
 	case 72:
+		DriveBase.isVision = false;
+		Robot.useAngleFromNavx();
 		Intake.flipperDown();
 		Timer.delay(1);
 		Intake.intakeRev();
@@ -658,9 +665,7 @@ class Auton{
 		
 		Intake.flipperUp();
 		driveForward(0.15);
-		if(travelled(10)) {
-
-			
+		if(travelled(0.1)) {
 			state = 100;
 		}
 		break;
@@ -670,11 +675,20 @@ class Auton{
 		
 		Intake.flipperOff();
 		state = 101;
+		break;
 //		Intake.outGear();
 	case 101:
+		stayStill();
 		if (waited(101,1)){
 			Intake.intakeRev();
+			Timer.delay(2);
+			Intake.intakeOff();
+			state = 102;
 		}
+		break;
+	case 102:
+		stayStill();
+		break;
 	default:
 		//Um . . .
 		break;
@@ -685,6 +699,7 @@ class Auton{
 	SmartDashboard.putNumber("current state", state);
 	}
 	
+	/*
 	static void redLeft(){
 	switch(state){
 	case 10:
@@ -778,7 +793,137 @@ class Auton{
 	SmartDashboard.putNumber("left encoder value auton", DriveBase.leftEncoder());
 	SmartDashboard.putNumber("yaw auton", DriveBase.getYaw());
 	SmartDashboard.putNumber("current state", state);
-	}
+	}*/
+	
+	static void redLeft(){
+		switch(state){
+		case 10:
+			DriveBase.isVision = false;
+			driveForward(0.3);
+			Intake.intakeOff();
+			Intake.flipperOff();
+			Robot.useAngleFromNavx();
+			if(travelled(68.5))
+			{
+				state = 30;
+			}
+			break;
+		case 30:
+			stayStill();
+			//Timer.delay(2);//Delays everything - NOT GOOD PRACTICE
+			if(waited(30, 1)) {
+				state = 40;
+			}
+			break;
+		case 40:
+			turnRight(0.18);
+			if(turned(49.2))//-46
+			{
+				DriveBase.resetAHRS();
+				state = 50;
+			}
+			break;
+		case 41:
+			stayStill();
+			waited(41, 0.1);
+//			Timer.delay(2);//Delays everything - NOT GOOD PRACTICE
+			state = 41;
+			break;
+		case 50:
+			stayStill();
+			if(waited(50, 1)) {
+				DriveBase.resetEncoders();
+				DriveBase.resetAHRS();
+				state = 60;
+			}
+			break;
+		case 60:
+			driveForward(0.2);
+			//Intake.flipperUp();
+			if(travelled(20) || Robot.visionTargetFound) {
+				if(waited(60, 0.5)) {
+					stayStill(); //RESET THE PID OBJECT
+					DriveBase.isVision = true;
+					Robot.useAngleFromCamera();
+					state = 65;
+				}
+			}
+			break;
+		case 65:
+			driveForward(0.195);
+			//Intake.flipperUp();
+			
+			if(Robot.isOnTarget()) { //travelled(26)) { //44 total inches	//DONT RUN INTO THE THING
+				state = 66;
+			}
+			break;
+		case 66:
+			stayStill();
+			
+			state = 80;
+			break;
+		case 70:
+			stayStill();
+//			Intake.placeGear();
+//			Intake.intakeRev();
+//			Timer.delay(1.5);
+			//Intake.intakeRev();
+			//driveForward(0.2);
+			if(travelled(1)) {
+				state = 80;	
+			}
+			break;
+		case 72:
+			DriveBase.isVision = false;
+			Robot.useAngleFromNavx();
+			Intake.flipperDown();
+			Timer.delay(1);
+			Intake.intakeRev();
+			for(int i = 0; i < 600; i++) { 
+				DriveBase.driver(0.15, 0.15);
+				if(i > 300) Intake.updateFlipperPosition();
+				Timer.delay(1/100);
+			}
+			
+			state = 100;
+			break;
+		case 80:
+			
+			Intake.flipperUp();
+			driveForward(0.15);
+			if(travelled(0.1)) {
+				state = 100;
+			}
+			break;
+		case 100:
+			stayStill();
+			//Intake.intakeOff();
+			
+			Intake.flipperOff();
+			state = 101;
+			break;
+//			Intake.outGear();
+		case 101:
+			stayStill();
+			if (waited(101,1)){
+				Intake.intakeRev();
+				Timer.delay(2);
+				Intake.intakeOff();
+				state = 102;
+			}
+			break;
+		case 102:
+			stayStill();
+			break;
+		default:
+			//Um . . .
+			break;
+			}
+		SmartDashboard.putNumber("rigt encoder value auton", DriveBase.rightEncoder());
+		SmartDashboard.putNumber("left encoder value auton", DriveBase.leftEncoder());
+		SmartDashboard.putNumber("yaw auton", DriveBase.getYaw());
+		SmartDashboard.putNumber("current state", state);
+		}
 	
 	static void redLeftLong(){
 		switch(state){

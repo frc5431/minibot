@@ -50,6 +50,7 @@ public class Robot extends IterativeRobot {
 	NetworkTable table;
 	//SendableChooser<Integer> autoChooser;
 	boolean isPullingBack = false;
+	static boolean visionTargetFound = false; 
 	int autoSelected = 1;
 	GripPipeline grip;
 	UsbCamera camera;
@@ -192,6 +193,7 @@ public class Robot extends IterativeRobot {
     			
     			if(contourPoints.size() < 2) {
     				SmartDashboard.putBoolean("ContoursFound", false);
+    				visionTargetFound = false;
     				return;
     			}
     			
@@ -219,6 +221,7 @@ public class Robot extends IterativeRobot {
     							leftPeg = childBox;
     							rightPeg = parentBox;
     						}
+    						visionTargetFound = true;
     						break;
     					} else {
     						SmartDashboard.putBoolean("PegFound", false);
@@ -237,7 +240,11 @@ public class Robot extends IterativeRobot {
     	    	SmartDashboard.putNumber("PegPairCenterX", fromCenter);
     	    	SmartDashboard.putNumber("PegHorzAngle", visionAngle);
     	    	SmartDashboard.putNumber("PegDisplacement", visionDistance);
-    		}
+    		} else {
+    	    	visionTargetFound = false;
+    	    }
+    	} else {
+    		visionTargetFound = false;
     	}
     }
     
@@ -257,7 +264,7 @@ public class Robot extends IterativeRobot {
     }
     
     public static boolean isOnTarget() {
-    	return visionDistance > 28; //Change number at competition
+    	return visionDistance > 43; //Change number at competition
     }
     
     public void autonomousInit() {
@@ -299,7 +306,8 @@ public class Robot extends IterativeRobot {
     	Auton.run(autoSelected);*/
     	//Auton.DriveForward();
     	//Auton.redMiddle();
-    	Auton.redRight();
+    	//Auton.redRight();
+    	Auton.redLeft();
     	//Auton.redMiddle();
     	//Auton.blueLeft();
     	//Auton.redRight();

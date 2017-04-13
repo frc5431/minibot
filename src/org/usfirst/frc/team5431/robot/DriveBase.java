@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import com.kauailabs.navx.frc.AHRS;
 import com.ctre.CANTalon;
@@ -24,11 +25,15 @@ public class DriveBase{
     static boolean isPID = false;
     
     public static final boolean isComp = false;
+    public static boolean isVision = false;
     
     public static final double
     	driveP = (isComp) ? 0.022 : 0.010,
     	driveI = (isComp) ? 0.0012 : 0.0008,
     	driveD = (isComp) ? 0.00031 : 0.00035,
+    	visionP = 0.015,
+    	visionI = 0.00004,
+    	visionD = 0.00040,
     	turnP = 0.14,
     	turnI = 0.0021,
     	turnD = 0.00051;
@@ -87,7 +92,13 @@ public class DriveBase{
 		driver(-power, -power);
 		drivePID.reset();
 		drivePID.setSetpoint(0);
-		drivePID.setPID(driveP, driveI, driveD, 0.0);
+		if(isVision) {
+			drivePID.setPID(visionP, visionI, visionD, 0.0);
+			SmartDashboard.putBoolean("VisionPID", true);
+		} else {
+			drivePID.setPID(driveP, driveI, driveD, 0.0);
+			SmartDashboard.putBoolean("VisionPID", false);
+		}
 		setDrivePIDSpeed(power);
 		DriveBasePIDOutput.wantedPID = DriveBasePIDOutput.PIDType.DriveForward;
     	drivePID.setInputRange(-90, 90);
@@ -130,14 +141,14 @@ public class DriveBase{
 	}
 	
 	public static void driver(double left, double right){
-		if(right > 0.2 || right < -0.2){
+		if(right > 0.08 || right < -0.08){
 			masterRight.set(right);
 		}
 		else{
 			masterRight.set(0);
 		}
 		
-		if(left > 0.2 || left < -0.2){
+		if(left > 0.08 || left < -0.08){
 	    	masterLeft.set(-left); 
 		}
 		else{
