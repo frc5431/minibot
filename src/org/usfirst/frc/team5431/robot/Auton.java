@@ -961,7 +961,7 @@ class Auton{
 			break;
 		case 50:
 			stayStill();
-			if(waited(50, 1)) {
+			if(waited(50, 0.25)) {
 				DriveBase.resetEncoders();
 				DriveBase.resetAHRS();
 				
@@ -1012,9 +1012,9 @@ class Auton{
 //			Intake.outGear();
 		case 71:
 			stayStill();
-			if (waited(101,1)){
+			if (waited(101, 0.5)){
 				Intake.intakeRev();
-				Timer.delay(2);
+				Timer.delay(0.5);
 				Intake.intakeOff();
 				state = 74;
 			}
@@ -1026,7 +1026,7 @@ class Auton{
 			}*/
 			
 			for(int i = 0; i < 600; i++) { 
-				if(i > 200) DriveBase.driver(0.3, 0.3);
+				if(i > 20) DriveBase.driver(0.3, 0.3);
 				if(i > 75) Intake.updateFlipperPosition();
 				Timer.delay(1/100);
 			}
@@ -1038,7 +1038,7 @@ class Auton{
 			break;
 		case 75:
 			stayStill();
-			if(waited(75, 0.5)) {
+			if(waited(75, 0.25)) {
 				state = 76;
 			}
 			break;
@@ -1083,7 +1083,7 @@ class Auton{
 		case 80:
 			Intake.flipperBack();
 			driveForward(0.5);
-			if(travelled(30)) {
+			if(travelled(40)) {
 				state = 100;
 			}
 			break;

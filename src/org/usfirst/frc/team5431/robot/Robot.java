@@ -331,6 +331,8 @@ public class Robot extends IterativeRobot {
      * This function is called periodically during operator control
      */
     public void teleopInit(){ 
+    	camera.setBrightness(30);
+    	camera.setExposureManual(50);
     	DriveBase.resetEncoders();
     	//drive.resetGlobalAngle();
     	DriveBase.resetAHRS();
