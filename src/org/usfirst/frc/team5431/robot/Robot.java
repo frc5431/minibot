@@ -24,6 +24,7 @@ import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Rect;
 import org.opencv.imgproc.Imgproc;
+import org.usfirst.frc.team5431.perception.GearPipeline;
 import org.usfirst.frc.team5431.perception.GripPipeline;
 //import org.usfirst.frc.team5431.utils.TitanDrive;
 //import org.usfirst.frc.team5431.utils.TitanNavx;
@@ -51,9 +52,11 @@ public class Robot extends IterativeRobot {
 	//SendableChooser<Integer> autoChooser;
 	boolean isPullingBack = false;
 	static boolean visionTargetFound = false; 
+	static boolean processGear = false;
 	int autoSelected = 1;
 	GripPipeline grip;
-	UsbCamera camera;
+	GearPipeline gripGear;
+	static UsbCamera camera;
 	CvSink cv;
 	Mat image = new Mat();
 	public static double visionAngle = 0, visionDistance = 0;
@@ -86,6 +89,7 @@ public class Robot extends IterativeRobot {
     	//camera.setWhiteBalanceManual(1000);
     	cv = CameraServer.getInstance().getVideo();
     	grip = new GripPipeline();
+    	gripGear = new GearPipeline();
     	LED.init();
     
     	//navx = new TitanNavx();
@@ -179,6 +183,50 @@ public class Robot extends IterativeRobot {
     	return (getCenterX(parent) == getCenterX(child)) && (getCenterY(parent) == getCenterY(child));
     }
     
+    public double getArea(MatOfPoint contour) {
+    	return Imgproc.contourArea(contour);
+    }
+    
+    public void processGearFrame() {
+    	cv.grabFrame(image);
+    	if(image != null)
+    	{
+    		if(!image.empty()) {
+    			gripGear.process(image);
+    			List<MatOfPoint> contourPoints = gripGear.filterContoursOutput();
+    			
+    			if(contourPoints.size() == 0) {
+    				visionTargetFound = false;
+    				return;
+    			}
+    			
+    			MatOfPoint largestMat = contourPoints.get(0);
+    			for(MatOfPoint object : contourPoints) {
+    				if(getArea(object) > getArea(largestMat)) {
+    					largestMat = object;
+    				}
+    			}
+    			
+    			Rect gearRect = getRectangle(largestMat);
+    			
+    			double centerX = getCenterX(gearRect);
+    			
+    			double imageWidth = image.cols();
+    			double fromCenter = centerX - (imageWidth / 2);
+    			double degreesPerPixel = (50.466 / imageWidth);
+    			visionAngle = fromCenter * degreesPerPixel;
+    			visionDistance = getCenterY(gearRect);
+    			visionTargetFound = true;
+    		} else {
+    			visionTargetFound = false;
+    		}
+    	} else {
+    		visionTargetFound = false;
+    	}
+    	
+		SmartDashboard.putBoolean("FoundGear", visionTargetFound);
+    }
+    
     public void processFrame() {
     	cv.grabFrame(image);
     	if(image != null)
@@ -249,8 +297,13 @@ public class Robot extends IterativeRobot {
     
     public void robotPeriodic(){
      	//LED.setTimeElapsed(150 - Timer.getMatchTime());
-    	
-    	processFrame();
+    	if(processGear) {
+    		SmartDashboard.putBoolean("ProcessingGear", true);
+    		processGearFrame();
+    	} else {
+    		SmartDashboard.putBoolean("ProcessingGear", false);
+    		processFrame();
+    	}
     	LED.setGear(Intake.isLimit());
     }
     
@@ -309,7 +362,12 @@ public class Robot extends IterativeRobot {
     	//Auton.redMiddle();
     	//Auton.redRight();
     	//Auton.redLeft();
-    	Auton.redLeftLong();
+    	//Auton.redLeftLong();
+    	Auton.redRightLong();
+    	//Auton.blueRightLong();
+    	//Auton.blueLeftLong();
+    	//Auton.testGear();
+    	//Auton.redMiddleTwoLeft();
     	//Auton.redMiddle();
     	//Auton.blueLeft();
     	//Auton.redRight();
@@ -327,12 +385,27 @@ public class Robot extends IterativeRobot {
     
     } 
 
+    public static void setCameraGear() {
+    	camera.setBrightness(10);
+    	camera.setExposureManual(25);
+    }
+    
+    public static void setCameraPeg() {
+    	camera.setBrightness(0);
+    	camera.setExposureManual(0);
+    }
+    
+    public static void setCameraNormal() {
+    	camera.setBrightness(30);
+    	camera.setExposureManual(20);
+    }
+    
     /**
      * This function is called periodically during operator control
      */
-    public void teleopInit(){ 
-    	camera.setBrightness(30);
-    	camera.setExposureManual(50);
+    public void teleopInit() { 
+    	//camera.setBrightness(20);
+    	//camera.setExposureManual(50);
     	DriveBase.resetEncoders();
     	//drive.resetGlobalAngle();
     	DriveBase.resetAHRS();
