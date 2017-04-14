@@ -82,8 +82,7 @@ public class Robot extends IterativeRobot {
     	table = NetworkTable.getTable("copernicus");
     	
     	camera = CameraServer.getInstance().startAutomaticCapture();
-    	camera.setBrightness(0);
-    	camera.setExposureManual(0);
+    	
     	//camera.setWhiteBalanceManual(1000);
     	cv = CameraServer.getInstance().getVideo();
     	grip = new GripPipeline();
@@ -268,6 +267,8 @@ public class Robot extends IterativeRobot {
     }
     
     public void autonomousInit() {
+    	camera.setBrightness(0);
+    	camera.setExposureManual(0);
     	Auton.state = 10;
     	autoSelected = (int) SmartDashboard.getNumber("AutonomousSelection", 3);//autoChooser.getSelected();
     	
@@ -307,7 +308,8 @@ public class Robot extends IterativeRobot {
     	//Auton.DriveForward();
     	//Auton.redMiddle();
     	//Auton.redRight();
-    	Auton.redLeft();
+    	//Auton.redLeft();
+    	Auton.redLeftLong();
     	//Auton.redMiddle();
     	//Auton.blueLeft();
     	//Auton.redRight();

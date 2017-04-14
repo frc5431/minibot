@@ -928,20 +928,25 @@ class Auton{
 	static void redLeftLong(){
 		switch(state){
 		case 10:
-			driveForward(0.25);
+			DriveBase.isVision = false;
+			driveForward(0.3);
 			Intake.intakeOff();
 			Intake.flipperOff();
-			if(travelled(68.5)) {
+			Robot.useAngleFromNavx();
+			if(travelled(68.5))
+			{
 				state = 30;
 			}
 			break;
 		case 30:
 			stayStill();
-//			Timer.delay(2);//Delays everything - NOT GOOD PRACTICE
-			state = 40;
+			//Timer.delay(2);//Delays everything - NOT GOOD PRACTICE
+			if(waited(30, 1)) {
+				state = 40;
+			}
 			break;
 		case 40:
-			turnRight(0.25);
+			turnRight(0.18);
 			if(turned(49.2))//-46
 			{
 				DriveBase.resetAHRS();
@@ -959,57 +964,76 @@ class Auton{
 			if(waited(50, 1)) {
 				DriveBase.resetEncoders();
 				DriveBase.resetAHRS();
+				
 				state = 60;
 			}
 			break;
-			
 		case 60:
-			driveForward(0.25);
-			Intake.flipperUp();
+			driveForward(0.2);
+			//Intake.flipperUp();
+			if(travelled(20) || Robot.visionTargetFound) {
+				if(waited(60, 0.5)) {
+					stayStill(); //RESET THE PID OBJECT
+					DriveBase.isVision = true;
+					Robot.useAngleFromCamera();
+					state = 65;
+				}
+			}
+			break;
+		case 65:
+			driveForward(0.195);
+			//Intake.flipperUp();
 			
-			if(travelled(52)) {
+			if(Robot.isOnTarget()) { //travelled(26)) { //44 total inches	//DONT RUN INTO THE THING
+				state = 66;
+			}
+			break;
+		case 66:
+			stayStill();
+			
+			state = 68;
+			break;
+		case 68:
+			DriveBase.isVision= false;
+			Robot.useAngleFromNavx();
+			Intake.flipperUp();
+			driveForward(0.15);
+			if(travelled(0.1)) {
 				state = 70;
 			}
 			break;
 		case 70:
-			//stayStill();
-			
-//			Intake.placeGear();
-//			Timer.delay(1.5);
-			driveForward(0.25);
-			boolean went = false;
-			if(travelled(5.5)) { 
-				went = true; 
-				DriveBase.disablePID();
-				DriveBase.driver(0, 0);
-				stayStill(); 
-			}
-			
-			if(went || waited(70, 2.5)) {
-				DriveBase.resetEncoders();
-				DriveBase.resetAHRS();
-				state = 72;
-			}
-			break;
-		case 72:
 			stayStill();
-			Intake.intakeRev();
-			Intake.flipperDown();
-			if(waited(72, 1)) {
-				state = 73;
+			//Intake.intakeOff();
+			
+			Intake.flipperOff();
+			state = 71;
+			break;
+//			Intake.outGear();
+		case 71:
+			stayStill();
+			if (waited(101,1)){
+				Intake.intakeRev();
+				Timer.delay(2);
+				Intake.intakeOff();
+				state = 74;
 			}
 			break;
-		case 73:
-			driveBackward(0.3);
+		case 74:
+			/*(0.3);
 			if(travelled(-37)) {
 				state = 75;
-			}
+			}*/
 			
-			/*for(int i = 0; i < 1000; i++) { 
-				if(i > 320) DriveBase.driver(0.21, 0.21);
+			for(int i = 0; i < 600; i++) { 
+				if(i > 200) DriveBase.driver(0.3, 0.3);
 				if(i > 75) Intake.updateFlipperPosition();
 				Timer.delay(1/100);
-			}*/
+			}
+			state = 75;
+			Robot.useAngleFromNavx();
+			DriveBase.isVision = false;
+			stayStill();
 			//state = 100;
 			break;
 		case 75:
@@ -1019,28 +1043,31 @@ class Auton{
 			}
 			break;
 		case 76:
-			turnLeft(0.25);
-			if(turned(-59)) {
+			turnLeft(0.3);
+			if(turned(-22)) {
 				state = 77;
 			}
 			break;
 		case 77:
 			stayStill();
-			if(waited(77, 0.5)) {
+			if(waited(77, 0.25)) {
 				DriveBase.resetAHRS();
 				DriveBase.resetEncoders();
+//				DriveBase.disablePID();
+				DriveBase.isVision = false;
 				state = 78;
+				
 			}
 			break;
 		case 78:
 			Intake.flipperBack();
-			driveForward(1);
-			if(travelled(265)) {
+			driveForward(0.8);
+			if(travelled(240)) {
 				stayStill();
-				state = 79;
+				state = 80;
 			}
 			break;
-		case 79:
+		/*case 79:
 			Intake.flipperBack();
 			if(DriveBase.getYaw() > 2 && futureTurn == 0) {
 				futureTurn = -Math.abs(DriveBase.getYaw() - 5);
@@ -1052,12 +1079,12 @@ class Auton{
 				stayStill();
 				state = 80;
 			}
-			break;
+			break;*/
 		case 80:
 			Intake.flipperBack();
-			driveForward(1);
-			if(travelled(58)) {
-				state = 81;
+			driveForward(0.5);
+			if(travelled(30)) {
+				state = 100;
 			}
 			break;
 		/*case 80:
@@ -1068,13 +1095,6 @@ class Auton{
 				state = 100;
 			}
 			break;*/
-		case 81:
-			Intake.flipperBack();
-			driveForward(0.3);
-			if(travelled(10)) {
-				state = 100;
-			}
-			break;
 		case 100:
 			stayStill();
 			//Intake.intakeOff();
