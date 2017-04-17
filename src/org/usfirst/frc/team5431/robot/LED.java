@@ -4,7 +4,6 @@ import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.SerialPort.Parity;
 import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj.SerialPort.StopBits;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class LED {
 	private static SerialPort serial;
@@ -57,5 +56,9 @@ public class LED {
 			//do nothing
 			System.err.println(e.getMessage());
 		}
+	}
+	
+	public static void periodic() {
+		setGear(Intake.isLimit());
 	}
 }

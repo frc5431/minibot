@@ -31,13 +31,13 @@ public class Intake {
     	//flipperLimit = new DigitalInput(5);
     	limit = new DigitalInput(4);
     	pot = new AnalogPotentiometer(0,270,0);
-    	intakeMotor = new CANTalon(constants.Intake);
-    	flipper = new CANTalon(constants.Flipper);
+    	intakeMotor = new CANTalon(Constants.Intake);
+    	flipper = new CANTalon(Constants.Flipper);
     	flipper.enableLimitSwitch(true, true);
-    	climber = new CANTalon(constants.ClimberMaster);
+    	climber = new CANTalon(Constants.ClimberMaster);
     	climber.setInverted(true); 
     	climber.enableBrakeMode(false);
-    	climberSlave = new CANTalon(constants.ClimberSlave);
+    	climberSlave = new CANTalon(Constants.ClimberSlave);
     	climberSlave.changeControlMode(CANTalon.TalonControlMode.Follower);
     	climberSlave.enableBrakeMode(false);
     	climberSlave.set(climber.getDeviceID());
@@ -86,6 +86,15 @@ public class Intake {
     
     public static boolean getFlipperDownLimit() {
     	return flipper.isRevLimitSwitchClosed();
+    }
+    
+    public static void rebaseIntake() {
+    	Intake.flipperBack();
+    	for(int a = 0; a < 3000; a++) {
+    		if(Intake.getFlipperUpLimit()) break;
+    		Intake.flipper.set(1);
+    		Timer.delay(0.05);
+    	}
     }
     
     public static void updateFlipperPosition()

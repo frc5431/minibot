@@ -1,6 +1,6 @@
 package org.usfirst.frc.team5431.robot;
 
-import org.usfirst.frc.team5431.robot.constants;
+import org.usfirst.frc.team5431.robot.Constants;
 
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj.Encoder;
@@ -23,36 +23,26 @@ public class DriveBase{
     static DriveBasePIDSource pidSource;
     static DriveBasePIDOutput pidOutput;
     static boolean isPID = false;
-    
-    public static final boolean isComp = false;
     public static boolean isVision = false;
     
-    public static final double
-    	driveP = (isComp) ? 0.022 : 0.010,
-    	driveI = (isComp) ? 0.0012 : 0.0008,
-    	driveD = (isComp) ? 0.00031 : 0.00035,
-    	visionP = 0.015,
-    	visionI = 0.00004,
-    	visionD = 0.00040,
-    	turnP = 0.14,
-    	turnI = 0.0021,
-    	turnD = 0.00051;
+    public static double 
+    	driveP, driveI, driveD,
+    	visionP, visionI, visionD,
+    	turnP, turnI, turnD;
     
-	public static void driveBaseInit(){
-		masterRight = new CANTalon(constants.masterRightId);
+	public static void init(){
+		masterRight = new CANTalon(Constants.masterRightId);
 		masterRight.enableBrakeMode(true);
-//		masterRight.setFeedbackDevice(CANTalon.FeedbackDevice.EncRising);
-    	masterLeft = new CANTalon(constants.masterLeftId);
+    	masterLeft = new CANTalon(Constants.masterLeftId);
 		masterLeft.enableBrakeMode(true);
-//    	masterLeft.setFeedbackDevice(CANTalon.FeedbackDevice.EncRising);
-    	bRight = new CANTalon(constants.bRightId);
+    	bRight = new CANTalon(Constants.bRightId);
     	bRight.changeControlMode(CANTalon.TalonControlMode.Follower);
-    	bRight.set(constants.masterRightId);
+    	bRight.set(Constants.masterRightId);
 		bRight.enableBrakeMode(true);
 
-    	bLeft = new CANTalon(constants.bLeftId);
+    	bLeft = new CANTalon(Constants.bLeftId);
     	bLeft.changeControlMode(CANTalon.TalonControlMode.Follower);
-    	bLeft.set(constants.masterLeftId);
+    	bLeft.set(Constants.masterLeftId);
 		bLeft.enableBrakeMode(true);
 
     	rightEncoder = new Encoder(0, 1, false, EncodingType.k4X);
@@ -75,13 +65,71 @@ public class DriveBase{
     	drivePID.setContinuous(true);
     	drivePID.disable();
     	
+    	masterLeft.setVoltageRampRate(0);
+    	masterRight.setVoltageRampRate(0);
+    	
+    	if(Constants.isType(RobotType.Practice)) {
+        	driveP = Constants.PracticeBot.driveP;
+        	driveI = Constants.PracticeBot.driveI;
+        	driveD = Constants.PracticeBot.driveD;
+        	visionP = Constants.PracticeBot.visionP;
+        	visionI = Constants.PracticeBot.visionI;
+        	visionD = Constants.PracticeBot.visionD;
+        	turnP = Constants.PracticeBot.turnP;
+        	turnI = Constants.PracticeBot.turnI;
+        	turnD = Constants.PracticeBot.turnD;
+    	} else {
+        	driveP = Constants.CompetitionBot.driveP;
+        	driveI = Constants.CompetitionBot.driveI;
+        	driveD = Constants.CompetitionBot.driveD;
+        	visionP = Constants.CompetitionBot.visionP;
+        	visionI = Constants.CompetitionBot.visionI;
+        	visionD = Constants.CompetitionBot.visionD;
+        	turnP = Constants.CompetitionBot.turnP;
+        	turnI = Constants.CompetitionBot.turnI;
+        	turnD = Constants.CompetitionBot.turnD;
+    	}
+    	
     	isPID = false;
 	}
 	
+	public static void setPIDNormal() {
+		isVision = false;
+	}
+	
+	public static void setPIDVision() {
+		isVision = true;
+	}
 	
 	public static void enablePID() {
 		drivePID.enable();
 		isPID = true;
+	}
+	
+	public static void drivePIDBackward(double power) {
+		drivePIDBackward(power, 0);
+	}
+	
+	public static void drivePIDBackward(double power, double setpoint) {
+		driver(power, power);
+		drivePID.reset();
+		drivePID.setSetpoint(0);
+		if(isVision) {
+			drivePID.setPID(visionP, visionI, visionD, 0.0);
+			SmartDashboard.putBoolean("VisionPID", true);
+		} else {
+			drivePID.setPID(driveP, driveI, driveD, 0.0);
+			SmartDashboard.putBoolean("VisionPID", false);
+		}
+		setDrivePIDSpeed(-power);
+		DriveBasePIDOutput.wantedPID = DriveBasePIDOutput.PIDType.DriveForward;
+    	drivePID.setInputRange(-90, 90);
+    	drivePID.setOutputRange(-1, 1);
+    	drivePID.setAbsoluteTolerance(0.5);
+    	drivePID.setToleranceBuffer(8);
+    	drivePID.setContinuous(true);
+		drivePID.setSetpoint(setpoint);
+		enablePID();
 	}
 	
 	public static void drivePIDForward(double power) {
@@ -160,6 +208,11 @@ public class DriveBase{
 	{
 		rightEncoder.reset();
 		leftEncoder.reset();
+	}
+	
+	public static void reset() {
+		resetEncoders();
+		resetAHRS();
 	}
 	
 	public static double leftEncoder()
