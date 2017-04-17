@@ -414,7 +414,7 @@ class Auton{
 			break;
 		case 75:
 			turnRight(0.3);
-			if(turned(85)) {
+			if(turned(80)) {
 				stayStill();
 				DriveBase.reset();
 //				Vision.setCameraPeg();
@@ -422,20 +422,60 @@ class Auton{
 			}
 			break;
 		case 80:
-			System.out.println("VISION PLACE PEG STATE");
 			visionPlacePeg();
 			if(visionState == 100) {
 				visionState = 10;
+				DriveBase.reset();
+				stayStill();
 				state = 100;
 			}
 			break;
 		case 100:
+			driveBackward(0.5);
+			if(travelled(-30)){
+				DriveBase.reset();
+				stayStill();
+				state = 110;
+			}
+			break;
+		case 110:
+			turnRight(0.3);
+			if(turned(80)){
+				stayStill();
+				DriveBase.reset();
+				state = 120;				
+			}
+			break;
+		case 120:
+			DriveBase.enablePID();
+			DriveBase.reset();
+			Vision.setCameraGear();
+			Vision.setGearTargetMode();
+			Vision.useAngleFromCamera();
+			DriveBase.setPIDVision();
+			stayStill();
+			state = 130;
+			break;
+		case 130:
+			Intake.flipperDown();
+			Intake.intakeOn();
+			state = 140;
+			break;
+		case 140:
+			driveForward(Constants.Auton.driveForwardPower);
+			if(Intake.isLimit()){
+				state = 150;
+			}
+			break;
+		case 150:
 			stayStill();
 			Intake.intakeOff();
+			break;
 		default:
 			break;
 			}
 	}
+	
 	
 	static void left() {
 		switch(state) {

@@ -29,7 +29,7 @@ public class Constants {
     				
     				driveForwardPower = 0.25,
     				driveBackwardPower = 0.3,
-    				driveTurnPower = 0.18;
+    				driveTurnPower = 0.3;
     }
     
     public static final class Vision {
