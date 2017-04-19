@@ -1,7 +1,7 @@
 package org.usfirst.frc.team5431.robot;
 
 public class Constants {
-    public static final RobotType type = RobotType.Practice;
+    public static final RobotType type = RobotType.Machined;
 	
     public static RobotType getType() {
     	return type;
@@ -24,12 +24,14 @@ public class Constants {
     public static final class Auton {
     	public static final double 
     				visionFindingPower = 0.2, //Speed to travel while looking for target
-    				visionFoundPower = 0.195, //Speed to travel when target is found
-    				visionFoundGearPower = 0.22, //Speed to travel when gear is found
+    				visionFoundPower = 0.225,//0.195, //Speed to travel when target is found
+    				visionFoundGearPower = 0.2, //Speed to travel when gear is found
+    				visionTargetGearAngle = 100, //Min max angle to turn
+    				visionTargetGearSpeed = 0.2, //Speed to turn and find gear
     				
     				driveForwardPower = 0.25,
     				driveBackwardPower = 0.3,
-    				driveTurnPower = 0.3;
+    				driveTurnPower = 0.15;
     }
     
     public static final class Vision {
@@ -40,7 +42,7 @@ public class Constants {
     	public static final double
     				cameraFov = 50.466,
     				degreesPerPixel = cameraFov / (double) imageWidth,
-    				cameraOffset = -1.5; //Add to camera misspositioning
+    				cameraOffset = 0.9; //Add to camera misspositioning
     	
     	public static double fromCenter(double pixel) {
     		return pixel - (imageWidth / 2);
@@ -78,6 +80,19 @@ public class Constants {
 	    	driveP = 0.022,
 	    	driveI = 0.0012,
 	    	driveD = 0.00031,
+	    	visionP = 0.015,
+	    	visionI = 0.00004,
+	    	visionD = 0.00040,
+	    	turnP = 0.14,
+	    	turnI = 0.0021,
+	    	turnD = 0.00051;
+    }
+    
+    public static final class MachinedBot {
+        public static final double
+	    	driveP = 0.005,
+	    	driveI = 0.0003,
+	    	driveD = 0.00035,
 	    	visionP = 0.015,
 	    	visionI = 0.00004,
 	    	visionD = 0.00040,

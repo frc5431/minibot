@@ -15,6 +15,8 @@ class Auton{
 	public static double travelledDistance = 0;
 	public static int driveTurnState = 10;
 	public static int visionState = 10;
+	public static int turnLockState = 10;
+	public static double turnLockAngle = 0;
 	
 	//Autonomous selection
 	public static SendableChooser<Integer> autoChooser;
@@ -29,9 +31,10 @@ class Auton{
 		autoChooser.addObject("Right", 30);
 		autoChooser.addObject("LeftLong", 40);
 		autoChooser.addObject("RightLong", 50);
-		autoChooser.addObject("MiddleTwoGear", 60);
-		autoChooser.addObject("StandStill", 70);
-		autoChooser.addObject("DriveForward", 80);
+		autoChooser.addObject("MiddleTwoGearLeft", 60);
+		autoChooser.addObject("MiddleTwoGearRight", 70);
+		autoChooser.addObject("StandStill", 80);
+		autoChooser.addObject("DriveForward", 90);
 		SmartDashboard.putData("Autonomous Mode Chooser", autoChooser);
 		initialized = true;
 	}
@@ -61,12 +64,16 @@ class Auton{
 			rightLong();
 			break;
 		case 60:
-			twoGearMiddle();
+			twoGearMiddle(false);
 			break;
 		case 70:
+			twoGearMiddle(true);
 			break;
 		case 80:
+			stayStill();
 			break;
+		case 90:
+			DriveForward();
 		default:
 			break;
 		}
@@ -220,7 +227,7 @@ class Auton{
 			break;
 		case 50:
 			stayStill();
-			if (waited(50, 0.5)){
+			if (waited(50, 0.75)){
 				Intake.intakeRev();
 				visionState = 60;
 			}
@@ -285,6 +292,69 @@ class Auton{
 		}
 	}
 	
+	static void turnLockGear(boolean isRight) {
+		switch(turnLockState) {
+		case 10:
+			stayStill();
+			DriveBase.reset();
+			Vision.setCameraGear();
+			Vision.setGearTargetMode();
+			DriveBase.setPIDVision();
+			if(waited(10, 0.5)) {
+				if(!isRight) {
+					turnLockState = 20;
+				} else {
+					turnLockState = 30;
+				}
+			}
+			break;
+		case 20:
+			turnLeft(Constants.Auton.visionFoundGearPower);
+			turnLockAngle = DriveBase.getYaw();
+			if(Vision.foundTarget()) {
+				stayStill();
+				turnLockState = 40;
+			} else if(DriveBase.getYaw() < -Constants.Auton.visionTargetGearAngle) {
+				turnLockState = 30;
+			}
+			break;
+		case 30:
+			turnRight(Constants.Auton.visionFoundGearPower);
+			turnLockAngle = DriveBase.getYaw();
+			if(Vision.foundTarget()) {
+				stayStill();
+				turnLockState = 40;
+			} else if(DriveBase.getYaw() > Constants.Auton.visionTargetGearAngle) {
+				turnLockState = 20;
+			}
+			break;
+		case 40:
+			stayStill();
+			Vision.useAngleFromCamera();
+			DriveBase.setPIDVision();
+			turnLockState = 50;
+			break;
+		case 50:
+			Intake.flipperDown();
+			Intake.intakeOn();
+			driveForward(Constants.Auton.visionFoundGearPower);
+			if(Intake.isLimit()) {
+				stayStill();
+				Intake.intakeOff();
+				Intake.flipperBack();
+				travelledDistance = (DriveBase.leftEncoder() + DriveBase.rightEncoder()) / 2;
+				SmartDashboard.putNumber("TravelledDistance", travelledDistance);
+				DriveBase.reset();
+				Vision.stopAllVision();
+				turnLockState = 100;
+			}
+			break;
+		default:
+			break;
+		}
+		
+	}
+	
 	static void DriveForward(){
 		switch(state)
 		{
@@ -341,7 +411,7 @@ class Auton{
 			}
 	}
 	
-	static void twoGearMiddle(){
+	static void twoGearMiddle(boolean isRight) {
 		switch(state){
 		case 10:
 			driveForward(0.28);
@@ -366,7 +436,7 @@ class Auton{
 			break;
 		case 40:
 			Intake.intakeRev();
-			if(waited(72, 0.25)) {
+			if(waited(40, 0.25)) {
 				state = 50;
 			}
 			break;
@@ -374,51 +444,115 @@ class Auton{
 			driveBackward(0.4);
 			if(travelled(-30)) {
 				stayStill();
-				state = 55;
+				Intake.flipperDown();
+				state = 53;
+			}
+			break;
+		case 53:
+			stayStill();
+			if(waited(53, 1)) {
+				state = 59;
 			}
 			break;
 		case 55:
-			turnLeft(0.3);
-			if(turned(-80)) {
-				stayStill();
+			/*if(!isRight){
+				turnLeft(0.3);
+				if(turned(-65)) {
+					stayStill();
+					DriveBase.reset();
+					state = 57;
+				}
+			} else{
+				turnRight(0.3);
+				if(turned(65)) {
+					stayStill();
+					DriveBase.reset();
+					state = 57;
+				}
+			}
+			break;
+		case 57:
+			stayStill();
+			if(waited(57, 0.5)) {
+				turnLockAngle = Vision.getAngle();
 				DriveBase.reset();
-				Vision.setCameraGear();
-				Vision.setGearTargetMode();
-				Vision.useAngleFromCamera();
-				DriveBase.setPIDVision();
+				state = 59;
+			}
+			break;*/
+			break;
+		case 58:
+			/*if(turnLockAngle < 0) {
+				turnLeft(0.16);
+				if(turned(turnLockAngle)) {
+					state = 59;
+				}
+			} else {
+				turnRight(0.16);
+	
+				if(turned(turnLockAngle)){
+					state = 59;
+				}
+			}
+			break;*/
+			state = 59;
+			break;
+		case 59:
+			stayStill();
+			if(waited(58,0.75)){
 				state = 60;
 			}
 			break;
 		case 60:
-			Intake.flipperDown();
-			Intake.intakeOn();
-			driveForward(Constants.Auton.visionFoundGearPower);
-			if(Intake.isLimit()) {
+			turnLockGear(isRight);
+			if(turnLockState == 100) {
 				stayStill();
-				Intake.intakeOff();
-				Intake.flipperBack();
-				travelledDistance = (DriveBase.leftEncoder() + DriveBase.rightEncoder()) / 2;
-				SmartDashboard.putNumber("TravelledDistance", travelledDistance);
 				DriveBase.reset();
-				Vision.stopAllVision();
+				turnLockState = 10;
+				startTime = 0;
+				state = 62;
+			}
+			break;
+		case 62:
+			stayStill();
+			if(waited(62, 0.25)){
 				state = 70;
 			}
 			break;
 		case 70:
 			driveBackward(0.45);
-			if(travelled((-Math.abs(travelledDistance)) + 10)) {
+			if(travelled((-Math.abs(travelledDistance)) + 25)) {
 				DriveBase.reset();
 				stayStill();
+				Vision.setCameraPeg();
+				Vision.setPegTargetMode();
+				Vision.useAngleFromCamera();
+				state= 72;
+			}
+			break;
+		case 72:
+			stayStill();
+			if(waited(72, 0.25)) {
 				state = 75;
 			}
 			break;
 		case 75:
-			turnRight(0.3);
-			if(turned(80)) {
-				stayStill();
-				DriveBase.reset();
-//				Vision.setCameraPeg();
-				state = 80;
+			if(!isRight){
+				turnRight(0.15);
+				if(Vision.foundTarget()) {//80)) {
+					stayStill();
+					DriveBase.reset();
+	//				Vision.setCameraPeg();
+					state = 80;
+				}
+			}
+			else{
+				turnLeft(0.15);
+				if(Vision.foundTarget()) {//80)) {
+					stayStill();
+					DriveBase.reset();
+//					Vision.setCameraPeg();
+					state = 80;
+				}
 			}
 			break;
 		case 80:
@@ -431,6 +565,9 @@ class Auton{
 			}
 			break;
 		case 100:
+			stayStill();
+			break;
+		/*case 100:
 			driveBackward(0.5);
 			if(travelled(-30)){
 				DriveBase.reset();
@@ -447,30 +584,21 @@ class Auton{
 			}
 			break;
 		case 120:
-			DriveBase.enablePID();
-			DriveBase.reset();
-			Vision.setCameraGear();
-			Vision.setGearTargetMode();
-			Vision.useAngleFromCamera();
-			DriveBase.setPIDVision();
 			stayStill();
 			state = 130;
 			break;
 		case 130:
-			Intake.flipperDown();
-			Intake.intakeOn();
-			state = 140;
-			break;
-		case 140:
-			driveForward(Constants.Auton.driveForwardPower);
-			if(Intake.isLimit()){
+			turnLockGear();
+			if(turnLockState == 100) {
+				turnLockAngle += Vision.getAngle();
+				turnLockState = 10;
 				state = 150;
 			}
 			break;
 		case 150:
 			stayStill();
 			Intake.intakeOff();
-			break;
+			break;*/
 		default:
 			break;
 			}
@@ -606,6 +734,8 @@ class Auton{
 	}
 	
 	static void testGear() {
+		Intake.updateFlipperPosition();
+		SmartDashboard.putNumber("GearAngle", Vision.getAngle());
 		switch(state) {
 		case 10:
 	    	stayStill();

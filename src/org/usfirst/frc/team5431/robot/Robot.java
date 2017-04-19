@@ -3,6 +3,7 @@ package org.usfirst.frc.team5431.robot;
 
 import org.usfirst.frc.team5431.perception.Vision;
 
+import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
 
@@ -64,6 +65,12 @@ public class Robot extends IterativeRobot {
     	Teleop.periodicIntake();
     	Teleop.periodicClimber();
     	Teleop.periodicDebug();
+    }
+    
+    public void disabledPeriodic() {
+    	DriveBase.disablePID();
+    	Vision.setGreenLedsOff();
+    	Vision.setWhiteLedsOff();
     }
    
     public void robotPeriodic() {

@@ -78,6 +78,16 @@ public class DriveBase{
         	turnP = Constants.PracticeBot.turnP;
         	turnI = Constants.PracticeBot.turnI;
         	turnD = Constants.PracticeBot.turnD;
+    	} else if(Constants.isType(RobotType.Machined)) {
+        	driveP = Constants.MachinedBot.driveP;
+        	driveI = Constants.MachinedBot.driveI;
+        	driveD = Constants.MachinedBot.driveD;
+        	visionP = Constants.MachinedBot.visionP;
+        	visionI = Constants.MachinedBot.visionI;
+        	visionD = Constants.MachinedBot.visionD;
+        	turnP = Constants.MachinedBot.turnP;
+        	turnI = Constants.MachinedBot.turnI;
+        	turnD = Constants.MachinedBot.turnD;
     	} else {
         	driveP = Constants.CompetitionBot.driveP;
         	driveI = Constants.CompetitionBot.driveI;

@@ -13,6 +13,7 @@ import org.usfirst.frc.team5431.robot.DriveBasePIDSource;
 import edu.wpi.cscore.CvSink;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.CameraServer;
+import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Vision {
@@ -21,6 +22,8 @@ public class Vision {
 	public static UsbCamera camera;
 	public static CvSink cv;
 	public static Mat image;
+	public static DigitalOutput greenLeds;
+	public static DigitalOutput whiteLeds;
 	public static boolean 
 			visionTargetFound = false, 
 			initialized = false;
@@ -44,22 +47,46 @@ public class Vision {
 		camera.setResolution(Constants.Vision.imageWidth, Constants.Vision.imageHeight);
 		cv = CameraServer.getInstance().getVideo();
 		
+		greenLeds = new DigitalOutput(6);
+		whiteLeds = new DigitalOutput(7);
+		
 		initialized = true;
+	}
+	
+	public static void setGreenLedsOn() {
+		greenLeds.set(true);
+	}
+	
+	public static void setGreenLedsOff() {
+		greenLeds.set(false);
+	}
+	
+	public static void setWhiteLedsOn() {
+		whiteLeds.set(true);
+	}
+	
+	public static void setWhiteLedsOff() {
+		whiteLeds.set(false);
 	}
 	
 	public static void setCameraNormal() {
 		camera.setBrightness(50);
 		camera.setExposureManual(30);
+		setGreenLedsOff();
 	}
 	
 	public static void setCameraPeg() {
 		camera.setBrightness(0);
 		camera.setExposureManual(0);
+		setGreenLedsOn();
+		setWhiteLedsOff();
 	}
 	
 	public static void setCameraGear() {
 		camera.setBrightness(10);
 		camera.setExposureManual(25);
+		setGreenLedsOff();
+		setWhiteLedsOn();
 	}
 	
     public static Rect getRectangle(MatOfPoint contour) {

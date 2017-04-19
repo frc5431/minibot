@@ -49,25 +49,25 @@ public class GearPipeline implements VisionPipeline {
 
 		// Step HSV_Threshold0:
 		Mat hsvThresholdInput = blurOutput;
-		double[] hsvThresholdHue = {0.0, 42.328757325263865};
-		double[] hsvThresholdSaturation = {199.72119386247593, 244.81164938782993};
-		double[] hsvThresholdValue = {36.690645295081374, 183.68151240152855};
+		double[] hsvThresholdHue = {0.0, 27.945185883404413};
+		double[] hsvThresholdSaturation = {220.29674801037464, 255.0};
+		double[] hsvThresholdValue = {38.21942628287583, 124.00684931506848};
 		hsvThreshold(hsvThresholdInput, hsvThresholdHue, hsvThresholdSaturation, hsvThresholdValue, hsvThresholdOutput);
 
 		// Step Find_Contours0:
 		Mat findContoursInput = hsvThresholdOutput;
-		boolean findContoursExternalOnly = true;
+		boolean findContoursExternalOnly = false;
 		findContours(findContoursInput, findContoursExternalOnly, findContoursOutput);
 
 		// Step Filter_Contours0:
 		ArrayList<MatOfPoint> filterContoursContours = findContoursOutput;
-		double filterContoursMinArea = 35.0;
-		double filterContoursMinPerimeter = 18.0;
-		double filterContoursMinWidth = 10.0;
-		double filterContoursMaxWidth = 80.0;
-		double filterContoursMinHeight = 2.0;
-		double filterContoursMaxHeight = 25.0;
-		double[] filterContoursSolidity = {47.362112741676185, 100.0};
+		double filterContoursMinArea = 30.0;
+		double filterContoursMinPerimeter = 19.0;
+		double filterContoursMinWidth = 17.0;
+		double filterContoursMaxWidth = 300.0;
+		double filterContoursMinHeight = 0.0;
+		double filterContoursMaxHeight = 50.0;
+		double[] filterContoursSolidity = {36.570742404718196, 100};
 		double filterContoursMaxVertices = 1000000.0;
 		double filterContoursMinVertices = 0.0;
 		double filterContoursMinRatio = 0.0;
