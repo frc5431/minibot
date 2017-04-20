@@ -332,6 +332,7 @@ class Auton{
 			stayStill();
 			Vision.useAngleFromCamera();
 			DriveBase.setPIDVision();
+			DriveBase.reset();
 			turnLockState = 50;
 			break;
 		case 50:
@@ -385,8 +386,8 @@ class Auton{
 			break;
 		case 70:
 			stayStill();
-			Intake.flipperUp();
-			if(waited(70, .75)) {
+			Intake.flipperBack();
+			if(waited(70, 0.75)) {
 				state = 71;
 			}
 			break;
@@ -519,8 +520,8 @@ class Auton{
 			}
 			break;
 		case 70:
-			driveBackward(0.45);
-			if(travelled((-Math.abs(travelledDistance)) + 25)) {
+			driveBackward(0.25);
+			if(travelled((-Math.abs(travelledDistance)) + 10)) {
 				DriveBase.reset();
 				stayStill();
 				Vision.setCameraPeg();

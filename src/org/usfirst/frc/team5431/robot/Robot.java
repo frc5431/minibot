@@ -18,6 +18,7 @@ public class Robot extends IterativeRobot {
     	NetworkTable.initialize();
     	Vision.init();
     	LED.init();
+    	Test.init();
     	
     	Vision.setCameraNormal();
     }
@@ -78,11 +79,12 @@ public class Robot extends IterativeRobot {
     	LED.periodic();
     }
     
+    public void testInit() {
+    	Test.testInit();
+    }
+    
     public void testPeriodic() {
-    	DriveBase.driver(0, 0);
-    	Intake.intakeOff();
-    	Intake.flipperDown();
-    	Intake.updateFlipperPosition();
+    	Test.periodic();
     }
     
 }

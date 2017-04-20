@@ -1,7 +1,7 @@
 package org.usfirst.frc.team5431.robot;
 
 public class Constants {
-    public static final RobotType type = RobotType.Machined;
+    public static final RobotType type = RobotType.Competition;
 	
     public static RobotType getType() {
     	return type;
@@ -24,13 +24,13 @@ public class Constants {
     public static final class Auton {
     	public static final double 
     				visionFindingPower = 0.2, //Speed to travel while looking for target
-    				visionFoundPower = 0.225,//0.195, //Speed to travel when target is found
+    				visionFoundPower = 0.195, //Speed to travel when target is found
     				visionFoundGearPower = 0.2, //Speed to travel when gear is found
     				visionTargetGearAngle = 100, //Min max angle to turn
-    				visionTargetGearSpeed = 0.2, //Speed to turn and find gear
+    				visionTargetGearSpeed = 0.18, //Speed to turn and find gear
     				
     				driveForwardPower = 0.25,
-    				driveBackwardPower = 0.3,
+    				driveBackwardPower = 0.25,
     				driveTurnPower = 0.15;
     }
     
@@ -80,9 +80,9 @@ public class Constants {
 	    	driveP = 0.022,
 	    	driveI = 0.0012,
 	    	driveD = 0.00031,
-	    	visionP = 0.015,
-	    	visionI = 0.00004,
-	    	visionD = 0.00040,
+	    	visionP = 0.010,
+	    	visionI = 0.000004,
+	    	visionD = 0.000005,
 	    	turnP = 0.14,
 	    	turnI = 0.0021,
 	    	turnD = 0.00051;

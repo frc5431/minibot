@@ -217,7 +217,7 @@ public class Vision {
     }
     
     public static boolean isOnTarget() {
-    	return visionDistance > 43;
+    	return visionDistance > 40; //48
     }
     
     public static boolean foundTarget() {

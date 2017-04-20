@@ -49,9 +49,9 @@ public class GearPipeline implements VisionPipeline {
 
 		// Step HSV_Threshold0:
 		Mat hsvThresholdInput = blurOutput;
-		double[] hsvThresholdHue = {0.0, 27.945185883404413};
-		double[] hsvThresholdSaturation = {220.29674801037464, 255.0};
-		double[] hsvThresholdValue = {38.21942628287583, 124.00684931506848};
+		double[] hsvThresholdHue = {0.0, 43.356144787514005};
+		double[] hsvThresholdSaturation = {174.43342991012463, 255.0};
+		double[] hsvThresholdValue = {87.14028886325069, 255.0};
 		hsvThreshold(hsvThresholdInput, hsvThresholdHue, hsvThresholdSaturation, hsvThresholdValue, hsvThresholdOutput);
 
 		// Step Find_Contours0:
