@@ -15,6 +15,7 @@ public class Test {
 		if(initialized) return;
 		testChooser = new SendableChooser<Integer>();
 		testChooser.addDefault("FlipperUp", 10);
+		testChooser.addObject("FlipperBack", 15);
 		testChooser.addObject("FlipperDown", 20);
 		testChooser.addObject("DriveForward", 30);
 		testChooser.addObject("DriveBackward", 40);
@@ -36,6 +37,11 @@ public class Test {
 			Auton.stayStill();
 			Intake.intakeOff();
 			Intake.flipperUp();
+			break;
+		case 15:
+			Auton.stayStill();
+			Intake.intakeOff();
+			Intake.flipperBack();
 			break;
 		case 20:
 			Auton.stayStill();

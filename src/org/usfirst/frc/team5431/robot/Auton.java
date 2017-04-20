@@ -386,7 +386,7 @@ class Auton{
 			break;
 		case 70:
 			stayStill();
-			Intake.flipperBack();
+			Intake.flipperUp();
 			if(waited(70, 0.75)) {
 				state = 71;
 			}
@@ -451,7 +451,7 @@ class Auton{
 			break;
 		case 53:
 			stayStill();
-			if(waited(53, 1)) {
+			if(waited(53, 0.75)) {
 				state = 59;
 			}
 			break;
@@ -520,8 +520,8 @@ class Auton{
 			}
 			break;
 		case 70:
-			driveBackward(0.25);
-			if(travelled((-Math.abs(travelledDistance)) + 10)) {
+			driveBackward(0.27);
+			if(travelled((-Math.abs(travelledDistance)) + 5)) {
 				DriveBase.reset();
 				stayStill();
 				Vision.setCameraPeg();
@@ -538,7 +538,7 @@ class Auton{
 			break;
 		case 75:
 			if(!isRight){
-				turnRight(0.15);
+				turnRight(0.205);
 				if(Vision.foundTarget()) {//80)) {
 					stayStill();
 					DriveBase.reset();
@@ -547,7 +547,7 @@ class Auton{
 				}
 			}
 			else{
-				turnLeft(0.15);
+				turnLeft(0.205);
 				if(Vision.foundTarget()) {//80)) {
 					stayStill();
 					DriveBase.reset();

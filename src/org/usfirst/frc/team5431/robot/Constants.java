@@ -25,13 +25,13 @@ public class Constants {
     	public static final double 
     				visionFindingPower = 0.2, //Speed to travel while looking for target
     				visionFoundPower = 0.195, //Speed to travel when target is found
-    				visionFoundGearPower = 0.2, //Speed to travel when gear is found
+    				visionFoundGearPower = 0.21, //Speed to travel when gear is found
     				visionTargetGearAngle = 100, //Min max angle to turn
     				visionTargetGearSpeed = 0.18, //Speed to turn and find gear
     				
-    				driveForwardPower = 0.25,
-    				driveBackwardPower = 0.25,
-    				driveTurnPower = 0.15;
+    				driveForwardPower = 0.27,
+    				driveBackwardPower = 0.27,
+    				driveTurnPower = 0.165;
     }
     
     public static final class Vision {
@@ -80,7 +80,7 @@ public class Constants {
 	    	driveP = 0.022,
 	    	driveI = 0.0012,
 	    	driveD = 0.00031,
-	    	visionP = 0.010,
+	    	visionP = 0.0108,
 	    	visionI = 0.000004,
 	    	visionD = 0.000005,
 	    	turnP = 0.14,

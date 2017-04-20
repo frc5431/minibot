@@ -17,10 +17,8 @@ public class Robot extends IterativeRobot {
     	Intake.intakeInit();
     	NetworkTable.initialize();
     	Vision.init();
-    	LED.init();
+    	//LED.init();
     	Test.init();
-    	
-    	Vision.setCameraNormal();
     }
  
     public void autonomousInit() {
@@ -35,7 +33,7 @@ public class Robot extends IterativeRobot {
     	//Bring the intake into the back position
     	Intake.rebaseIntake();
     	
-    	Vision.setCameraGear();
+    	//Vision.setCameraGear();
     }
 
     /**
@@ -76,7 +74,7 @@ public class Robot extends IterativeRobot {
    
     public void robotPeriodic() {
     	Vision.periodic();
-    	LED.periodic();
+    	//LED.periodic();
     }
     
     public void testInit() {

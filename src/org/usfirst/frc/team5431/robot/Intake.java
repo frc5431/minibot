@@ -1,15 +1,11 @@
 package org.usfirst.frc.team5431.robot;
-import edu.wpi.first.wpilibj.Timer;
-
-
 import com.ctre.CANTalon;
 
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.AnalogTrigger;
-import edu.wpi.first.wpilibj.AnalogTriggerOutput.AnalogTriggerType;
 import edu.wpi.first.wpilibj.Counter;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.interfaces.Potentiometer;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Intake {
@@ -38,9 +34,9 @@ public class Intake {
     	climber.setInverted(true); 
     	climber.enableBrakeMode(false);
     	climberSlave = new CANTalon(Constants.ClimberSlave);
-    	climberSlave.changeControlMode(CANTalon.TalonControlMode.Follower);
+    	//climberSlave.changeControlMode(CANTalon.TalonControlMode.Follower);
     	climberSlave.enableBrakeMode(false);
-    	climberSlave.set(climber.getDeviceID());
+    	//climberSlave.set(climber.getDeviceID()); - SLAVE
     	analogTrigger = new AnalogTrigger(1);
     	
     	analogTrigger.setLimitsVoltage(3.5, 3.8);
@@ -51,15 +47,16 @@ public class Intake {
     
     public static void climbSlow() {
     	climber.set(-0.45);
+    	climberSlave.set(-0.45);
     }
     
     public static void climb() {
     	climber.set(-1);
+    	climberSlave.set(-1);
     }
     
     public static void setFlipperPosition(int degree){
     	SmartDashboard.putNumber("pot(decrimalized)", pot.get());	
-    	
     }
     
     public static int getPosition()
@@ -216,6 +213,7 @@ public class Intake {
     
     public static void climbOff() {
     	climber.set(0);
+    	climberSlave.set(0);
     }
     
     

@@ -43,8 +43,9 @@ public class Vision {
 		gripGear = new GearPipeline();
 		image = new Mat();
 		
-		camera = CameraServer.getInstance().startAutomaticCapture();
+		camera = CameraServer.getInstance().startAutomaticCapture(0);
 		camera.setResolution(Constants.Vision.imageWidth, Constants.Vision.imageHeight);
+		camera.setFPS(20);
 		cv = CameraServer.getInstance().getVideo();
 		
 		greenLeds = new DigitalOutput(6);
