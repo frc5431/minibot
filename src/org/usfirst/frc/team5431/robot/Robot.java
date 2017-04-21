@@ -3,6 +3,7 @@ package org.usfirst.frc.team5431.robot;
 
 import org.usfirst.frc.team5431.perception.Vision;
 
+import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
@@ -16,6 +17,9 @@ public class Robot extends IterativeRobot {
     	Teleop.init();
     	Intake.intakeInit();
     	NetworkTable.initialize();
+    	
+    	Vision.camera = CameraServer.getInstance().startAutomaticCapture();
+    	
     	Vision.init();
     	//LED.init();
     	Test.init();

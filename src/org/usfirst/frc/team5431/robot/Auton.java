@@ -309,7 +309,7 @@ class Auton{
 			}
 			break;
 		case 20:
-			turnLeft(Constants.Auton.visionFoundGearPower);
+			turnLeft(Constants.Auton.visionTargetGearTurn);
 			turnLockAngle = DriveBase.getYaw();
 			if(Vision.foundTarget()) {
 				stayStill();
@@ -319,7 +319,7 @@ class Auton{
 			}
 			break;
 		case 30:
-			turnRight(Constants.Auton.visionFoundGearPower);
+			turnRight(Constants.Auton.visionTargetGearTurn);
 			turnLockAngle = DriveBase.getYaw();
 			if(Vision.foundTarget()) {
 				stayStill();
@@ -538,7 +538,7 @@ class Auton{
 			break;
 		case 75:
 			if(!isRight){
-				turnRight(0.205);
+				turnRight(0.23);
 				if(Vision.foundTarget()) {//80)) {
 					stayStill();
 					DriveBase.reset();
@@ -547,7 +547,7 @@ class Auton{
 				}
 			}
 			else{
-				turnLeft(0.205);
+				turnLeft(0.23);
 				if(Vision.foundTarget()) {//80)) {
 					stayStill();
 					DriveBase.reset();

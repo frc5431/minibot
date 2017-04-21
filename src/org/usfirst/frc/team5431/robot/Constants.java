@@ -27,7 +27,8 @@ public class Constants {
     				visionFoundPower = 0.195, //Speed to travel when target is found
     				visionFoundGearPower = 0.21, //Speed to travel when gear is found
     				visionTargetGearAngle = 100, //Min max angle to turn
-    				visionTargetGearSpeed = 0.18, //Speed to turn and find gear
+    				visionTargetGearSpeed = 0.2, //Speed to turn and find gear
+    				visionTargetGearTurn = 0.25,
     				
     				driveForwardPower = 0.27,
     				driveBackwardPower = 0.27,
