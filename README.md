@@ -1,3 +1,3 @@
 # minibot
 
-Hello! This is Thrice Code! - xXx_RookieSlayer101_xXx
+Hello! This is Thrice Code! - xXx_Trumpforpreshillarysux_xXx
